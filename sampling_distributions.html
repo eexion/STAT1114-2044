@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAT1114 / STAT2044: Sampling Distributions Exam Master</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for statistics visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- KaTeX CSS (load in head for correct styling) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#0f172a'
+                        },
+                        statGold: '#f59e0b',
+                        statTeal: '#0d9488'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono-code { font-family: 'Fira Code', monospace; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .katex { font-size: 1em; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- TOP HEADER / PROFESSOR BANNER -->
+    <header class="bg-slate-800/90 border-b border-slate-700/80 sticky top-0 z-50 backdrop-blur">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                        <i class="fa-solid font-bold fa-chart-line text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">STAT1114 / STAT2044</span>
+                            <span class="text-xs text-slate-400">Lecture 4 Study Companion</span>
+                        </div>
+                        <h1 class="text-lg font-bold text-white tracking-tight">Sampling Distributions &amp; Inferential Estimation</h1>
+                    </div>
+                </div>
+
+                <!-- Exam Readiness Score & Checklist Meter -->
+                <div class="flex items-center space-x-6 bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-700/60">
+                    <div>
+                        <div class="text-xs text-slate-400 font-medium">Exam Readiness</div>
+                        <div class="text-sm font-bold text-emerald-400 flex items-center gap-1">
+                            <span id="readinessScore">0</span>% Ready
+                            <i class="fa-solid fa-circle-check text-xs text-emerald-400"></i>
+                        </div>
+                    </div>
+                    <div class="w-28 bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                        <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-emerald-400 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <button onclick="resetProgress()" class="text-slate-400 hover:text-rose-400 text-xs transition" title="Reset Study Progress">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP NAVIGATION TABS -->
+    <div class="bg-slate-800 border-b border-slate-700 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex space-x-1 sm:space-x-4 overflow-x-auto custom-scrollbar py-2 text-xs sm:text-sm font-medium">
+            <button onclick="switchTab('checklist')" id="tab-checklist" class="tab-btn active px-4 py-2.5 rounded-lg flex items-center gap-2 transition text-white bg-blue-600 font-semibold shadow">
+                <i class="fa-solid fa-list-check text-blue-200"></i>
+                <span>1. Core Concepts &amp; Checklist</span>
+            </button>
+            <button onclick="switchTab('clt-lab')" id="tab-clt-lab" class="tab-btn px-4 py-2.5 rounded-lg flex items-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-700/50">
+                <i class="fa-solid fa-flask text-teal-400"></i>
+                <span>2. Interactive CLT Simulator</span>
+            </button>
+            <button onclick="switchTab('case-studies')" id="tab-case-studies" class="tab-btn px-4 py-2.5 rounded-lg flex items-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-700/50">
+                <i class="fa-solid fa-sliders text-amber-400"></i>
+                <span>3. Slide Case Studies Visualizer</span>
+            </button>
+            <button onclick="switchTab('exam-quiz')" id="tab-exam-quiz" class="tab-btn px-4 py-2.5 rounded-lg flex items-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-700/50">
+                <i class="fa-solid fa-pen-to-square text-purple-400"></i>
+                <span>4. Exam Practice &amp; Quiz</span>
+            </button>
+            <button onclick="switchTab('formula-sheet')" id="tab-formula-sheet" class="tab-btn px-4 py-2.5 rounded-lg flex items-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-700/50">
+                <i class="fa-solid fa-square-root-variable text-pink-400"></i>
+                <span>5. Formula Sheet &amp; Tables</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: CORE CONCEPTS & CHECKLIST -->
+        <!-- ========================================== -->
+        <section id="content-checklist" class="tab-content space-y-6">
+            <!-- Welcome Note -->
+            <div class="bg-gradient-to-r from-blue-900/60 via-indigo-900/50 to-slate-800 border border-blue-500/30 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                <div class="flex items-start gap-4 z-10 relative">
+                    <div class="w-14 h-14 rounded-full bg-slate-800 border-2 border-blue-400 flex-shrink-0 flex items-center justify-center text-blue-400 shadow-md">
+                        <i class="fa-solid fa-user-graduate text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            Guidance: Topic 4 Blueprint
+                        </h2>
+                        <p class="text-sm text-slate-300 mt-1 leading-relaxed">
+                            Welcome, Data Analytics students! Lecture 04 forms the bridge between descriptive data analysis and inferential statistics. In your final exam, you will be tested on 3 main pillars: <span class="text-blue-300 font-semibold">1. Sampling Distributions &amp; the Central Limit Theorem</span>, <span class="text-amber-300 font-semibold">2. Sampling Proportions</span>, and <span class="text-emerald-300 font-semibold">3. Interval Estimation (\(Z\) vs. \(t\) procedures)</span>. Check off these concepts as you master them!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Checklist Interactive Module -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-blue-400"></i>
+                            Key Learning Objectives Checklist
+                        </h3>
+                        <span class="text-xs text-slate-400">Click items to track your progress</span>
+                    </div>
+
+                    <!-- Checklist Cards -->
+                    <div class="space-y-3">
+                        <!-- Item 1 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk1')" id="chk1" class="mt-1 w-5 h-5 rounded border-slate-600 text-blue-600 focus:ring-blue-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        Population vs. Sample vs. Sampling Distribution
+                                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded border border-blue-500/30">Slide 3-4</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        Distinguish between parameter (\(\mu, \sigma\)) and statistic (\(\bar{X}, s\)). A <em>sampling distribution</em> is the distribution formed by taking ALL possible samples of size \(n\) from a population and computing their means.
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Item 2 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk2')" id="chk2" class="mt-1 w-5 h-5 rounded border-slate-600 text-blue-600 focus:ring-blue-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        Sampling Error &amp; Random Variability
+                                        <span class="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">Slide 6, 8</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        Sampling error \(= \mu - \bar{X}\). Because sample mean \(\bar{X}\) varies from sample to sample, it is a <strong>random variable</strong> with mean \(\mu_{\bar{X}} = \mu\) and standard error \(\sigma_{\bar{X}} = \dfrac{\sigma}{\sqrt{n}}\).
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Item 3 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk3')" id="chk3" class="mt-1 w-5 h-5 rounded border-slate-600 text-blue-600 focus:ring-blue-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        Central Limit Theorem (CLT)
+                                        <span class="text-xs bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded border border-teal-500/30">Slide 11</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        For large sample sizes (\(n \ge 30\)), the sampling distribution of \(\bar{X}\) is approximately <strong>normal</strong> regardless of the underlying population shape, with mean \(\mu\) and standard error \(\sigma / \sqrt{n}\).
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Item 4 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk4')" id="chk4" class="mt-1 w-5 h-5 rounded border-slate-600 text-blue-600 focus:ring-blue-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        Sampling Distribution of Sample Proportion (\(\hat{p}\))
+                                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded border border-purple-500/30">Slide 15-18</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        For categorical data: \(\hat{p} = \dfrac{X}{n}\). Standard Error \(\sigma_{\hat{p}} = \sqrt{\dfrac{p(1-p)}{n}}\). Standardized score \(Z = \dfrac{\hat{p}-p}{\sqrt{\dfrac{p(1-p)}{n}}}\).
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Item 5 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk5')" id="chk5" class="mt-1 w-5 h-5 rounded border-slate-600 text-blue-600 focus:ring-blue-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        One-Mean \(Z\)-Interval Procedure (\(\sigma\) Known)
+                                        <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">Slide 26-27</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        Formula: \(\bar{x} \pm z_{\alpha/2} \left(\dfrac{\sigma}{\sqrt{n}}\right)\). Used when population standard deviation \(\sigma\) is known and population is normal or \(n \ge 30\).
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Item 6 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk6')" id="chk6" class="mt-1 w-5 h-5 rounded border-slate-600 text-blue-600 focus:ring-blue-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        Margin of Error &amp; Required Sample Size (\(n\))
+                                        <span class="text-xs bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded border border-pink-500/30">Slide 29-31</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        Margin of error \(E = z_{\alpha/2} \cdot \dfrac{\sigma}{\sqrt{n}}\). Required sample size \(n = \left(\dfrac{z_{\alpha/2} \cdot \sigma}{E}\right)^2\), <strong>always rounded UP</strong> to the next whole integer.
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Item 7 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk7')" id="chk7" class="mt-1 w-5 h-5 rounded border-slate-600 text-blue-600 focus:ring-blue-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        One-Mean Studentized \(t\)-Interval (\(\sigma\) Unknown)
+                                        <span class="text-xs bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded border border-sky-500/30">Slide 32-36</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        Formula: \(\bar{x} \pm t_{\alpha/2} \left(\dfrac{s}{\sqrt{n}}\right)\) with degrees of freedom \(df = n - 1\). Used when \(\sigma\) is unknown and substituted by sample standard deviation \(s\).
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decision Tree Widget: Z vs T Procedure Selection -->
+                <div class="space-y-4">
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
+                        <h3 class="text-md font-bold text-white mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-sitemap text-statGold"></i>
+                            Exam Decision Tree: \(Z\) vs. \(t\)?
+                        </h3>
+                        <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+                            How to choose the correct formula in exam questions:
+                        </p>
+
+                        <div class="space-y-3 text-xs">
+                            <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
+                                <div class="font-bold text-amber-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-question"></i> Step 1: What parameter?
+                                </div>
+                                <div class="text-slate-300 mt-1 ml-4">
+                                    • Mean (\(\mu\)) \(\rightarrow\) Proceed to Step 2.<br>
+                                    • Proportion (\(p\)) \(\rightarrow\) Use \(Z = \dfrac{\hat{p}-p}{\sqrt{\dfrac{p(1-p)}{n}}}\).
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
+                                <div class="font-bold text-blue-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-shield-halved"></i> Step 2: Is \(\sigma\) Known?
+                                </div>
+                                <div class="text-slate-300 mt-1 ml-4">
+                                    • <strong>YES (\(\sigma\) known):</strong> Use One-Mean \(Z\)-Interval (\(z_{\alpha/2}\)).<br>
+                                    • <strong>NO (\(\sigma\) unknown, \(s\) given):</strong> Use One-Mean \(t\)-Interval (\(t_{\alpha/2},\ df=n-1\)).
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
+                                <div class="font-bold text-emerald-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-check-double"></i> Step 3: Normality / Sample Size
+                                </div>
+                                <div class="text-slate-300 mt-1 ml-4">
+                                    • If population is normal, valid for any \(n\).<br>
+                                    • If population non-normal, requires \(n \ge 30\) (CLT).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Exam Tip Box -->
+                    <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 text-xs text-amber-200">
+                        <div class="font-bold text-amber-400 flex items-center gap-2 mb-1">
+                            <i class="fa-solid fa-lightbulb"></i> Professor's Common Mistake Alert
+                        </div>
+                        <p class="leading-relaxed">
+                            Students often confuse sample standard deviation \(s\) with standard error \(SE = \dfrac{s}{\sqrt{n}}\). Remember: standard error shrinks as sample size \(n\) grows!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 2: INTERACTIVE CLT LAB / SIMULATOR -->
+        <!-- ========================================== -->
+        <section id="content-clt-lab" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-700">
+                    <div>
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-flask text-teal-400"></i>
+                            Central Limit Theorem (CLT) Live Simulation Laboratory
+                        </h2>
+                        <p class="text-xs text-slate-400">
+                            Demonstrating Slide 11: Watch any parent population transform into a bell curve as sample size \(n\) increases!
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="runCLTSimulation(1)" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1">
+                            <i class="fa-solid fa-play text-emerald-400"></i> Sample +1
+                        </button>
+                        <button onclick="runCLTSimulation(100)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1">
+                            <i class="fa-solid fa-forward text-blue-200"></i> Sample +100
+                        </button>
+                        <button onclick="runCLTSimulation(2000)" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1">
+                            <i class="fa-solid fa-bolt text-amber-300"></i> Fast 2,000 Samples
+                        </button>
+                        <button onclick="resetCLTLab()" class="px-3 py-1.5 bg-rose-600/20 text-rose-300 hover:bg-rose-600/30 border border-rose-500/30 rounded-lg text-xs font-semibold transition">
+                            <i class="fa-solid fa-trash"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Controls Bar -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 py-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Population Shape</label>
+                        <select id="cltPopShape" onchange="resetCLTLab()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
+                            <option value="skewed">Uniformly Skewed (Right-Skewed)</option>
+                            <option value="uniform">Uniform (Flat Box)</option>
+                            <option value="bimodal">Bimodal (Two Peaks)</option>
+                            <option value="normal">Normally Distributed</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-semibold text-slate-300 mb-1">
+                            <span>Sample Size (\(n\))</span>
+                            <span id="cltValN" class="text-teal-400 font-bold">\(n = 5\)</span>
+                        </div>
+                        <input type="range" id="cltSliderN" min="1" max="100" value="5" oninput="updateCLTSliderVal()" class="w-full accent-teal-400 cursor-pointer">
+                    </div>
+
+                    <div class="sm:col-span-2 flex items-center justify-around bg-slate-900/80 p-3 rounded-xl border border-slate-700 text-xs">
+                        <div class="text-center">
+                            <div class="text-slate-400">Total Samples (\(M\))</div>
+                            <div id="cltStatM" class="text-base font-bold text-white">0</div>
+                        </div>
+                        <div class="h-8 w-px bg-slate-700"></div>
+                        <div class="text-center">
+                            <div class="text-slate-400">Mean of Sample Means (\(\mu_{\bar{X}}\))</div>
+                            <div id="cltStatMean" class="text-base font-bold text-teal-400">0.00</div>
+                        </div>
+                        <div class="h-8 w-px bg-slate-700"></div>
+                        <div class="text-center">
+                            <div class="text-slate-400">Standard Error (\(\sigma_{\bar{X}}\))</div>
+                            <div id="cltStatSE" class="text-base font-bold text-amber-400">0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Charts -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                    <!-- Population Chart -->
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-slate-300">1. Underlying Population Distribution</span>
+                            <span id="popStats" class="text-xs text-slate-400 font-mono">\(\mu=2.50,\ \sigma=1.44\)</span>
+                        </div>
+                        <div class="h-48 relative">
+                            <canvas id="chartPop"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Sampling Distribution Chart -->
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-teal-300">2. Empirical Sampling Distribution of Sample Means (\(\bar{X}\))</span>
+                            <span class="text-xs text-emerald-400 font-semibold" id="cltNormalityCheck">Observe Shape...</span>
+                        </div>
+                        <div class="h-48 relative">
+                            <canvas id="chartSampling"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Concept Insights Box -->
+                <div class="mt-4 bg-teal-950/30 border border-teal-500/30 rounded-xl p-4 text-xs text-teal-200 leading-relaxed">
+                    <span class="font-bold text-teal-400"><i class="fa-solid fa-graduation-cap mr-1"></i> Key Takeaway for STAT1114 Exam:</span>
+                    <p>When <em>n</em> = 1, the sampling distribution of the sample mean is identical to the population distribution. As the sample size increases, the sampling distribution becomes more symmetric and increasingly resembles a normal distribution — even when the original population is skewed or bimodal — provided the population has a finite mean and finite variance.</p>
+                    <p>This is the essence of the <strong>Central Limit Theorem (CLT)</strong>: the sampling distribution of the sample mean approaches a normal distribution as <em>n</em> increases, regardless of the population's shape (under the finite mean and variance condition). While <em>n</em> ≥ 30 is commonly used as a practical guideline, this threshold is not universally sufficient — highly skewed populations may require a considerably larger sample size before the normal approximation becomes reliable.</p>
+                    <p>Additionally, as <em>n</em> increases, the standard error (\(SE = \dfrac{\sigma}{\sqrt{n}}\)) decreases, causing the sampling distribution to become more tightly concentrated around the population mean \(\mu\).</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 3: SLIDE CASE STUDIES EXPLORER -->
+        <!-- ========================================== -->
+        <section id="content-case-studies" class="tab-content space-y-6 hidden">
+            <!-- Case Study Selector -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+                <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-book-bookmark text-amber-400"></i> Select Case Study from Slides:
+                </span>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="loadCaseStudy(1)" id="csBtn1" class="cs-tab-btn active text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-500 text-slate-900 shadow">
+                        Ex 1: Children Screen Time (p.12)
+                    </button>
+                    <button onclick="loadCaseStudy(2)" id="csBtn2" class="cs-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 hover:text-white">
+                        Ex 2: NYC 10-km Run (p.13)
+                    </button>
+                    <button onclick="loadCaseStudy(3)" id="csBtn3" class="cs-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 hover:text-white">
+                        Ex 3: iPhone Market Share (p.18)
+                    </button>
+                    <button onclick="loadCaseStudy(4)" id="csBtn4" class="cs-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 hover:text-white">
+                        Ex 4: Cyber Security Z-CI (p.23,27,31)
+                    </button>
+                    <button onclick="loadCaseStudy(5)" id="csBtn5" class="cs-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 hover:text-white">
+                        Ex 5: YouTube t-Interval (p.36)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Case View Container -->
+            <div id="caseStudyContainer" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
+                <!-- Dynamically injected via JavaScript -->
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 4: EXAM PRACTICE & QUIZ -->
+        <!-- ========================================== -->
+        <section id="content-exam-quiz" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-700">
+                    <div>
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square text-purple-400"></i>
+                            Final Exam Practice &amp; Self-Assessment
+                        </h2>
+                        <p class="text-xs text-slate-400">
+                            Test your exam readiness with authentic problem formats based on STAT1114/STAT2044 exam papers.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="text-xs bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 font-mono">
+                            Score: <span id="quizScoreDisplay" class="text-purple-400 font-bold">0 / 5</span>
+                        </div>
+                        <button onclick="generateNewQuiz()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1">
+                            <i class="fa-solid fa-arrows-rotate"></i> Reset Quiz
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Questions List -->
+                <div id="quizQuestionsContainer" class="space-y-6 mt-6">
+                    <!-- Populated dynamically by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 5: FORMULA SHEET & QUICK TABLES -->
+        <!-- ========================================== -->
+        <section id="content-formula-sheet" class="tab-content space-y-6 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Formula Card 1: Sampling Distribution of Means -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                        <h3 class="text-md font-bold text-blue-400">1. Sampling Distribution of Mean (\(\bar{X}\))</h3>
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">Slide 11</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-slate-300 font-mono-code bg-slate-900 p-3 rounded-xl border border-slate-700">
+                        <p><span class="text-slate-400">Mean:</span> \(\mu_{\bar{X}} = \mu\)</p>
+                        <p><span class="text-slate-400">Standard Error:</span> \(\sigma_{\bar{X}} = \dfrac{\sigma}{\sqrt{n}}\)</p>
+                        <p><span class="text-slate-400">Z-Score:</span> \(Z = \dfrac{\bar{X} - \mu}{\sigma / \sqrt{n}} \sim N(0, 1)\)</p>
+                    </div>
+                </div>
+
+                <!-- Formula Card 2: Sampling Distribution of Proportion -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                        <h3 class="text-md font-bold text-amber-400">2. Sampling Distribution of Proportion (\(\hat{p}\))</h3>
+                        <span class="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">Slide 17</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-slate-300 font-mono-code bg-slate-900 p-3 rounded-xl border border-slate-700">
+                        <p><span class="text-slate-400">Sample Proportion:</span> \(\hat{p} = \dfrac{X}{n}\)</p>
+                        <p><span class="text-slate-400">Standard Error:</span> \(\sigma_{\hat{p}} = \sqrt{\dfrac{p(1-p)}{n}}\)</p>
+                        <p><span class="text-slate-400">Z-Score:</span> \(Z = \dfrac{\hat{p} - p}{\sqrt{\dfrac{p(1-p)}{n}}} \sim N(0, 1)\)</p>
+                    </div>
+                </div>
+
+                <!-- Formula Card 3: Confidence Intervals -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                        <h3 class="text-md font-bold text-emerald-400">3. One-Mean Confidence Intervals</h3>
+                        <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Slide 26, 34</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-slate-300 font-mono-code bg-slate-900 p-3 rounded-xl border border-slate-700">
+                        <p><span class="text-emerald-400">\(Z\)-Interval (\(\sigma\) Known):</span></p>
+                        <p class="pl-3">\(\bar{x} \pm z_{\alpha/2} \left(\dfrac{\sigma}{\sqrt{n}}\right)\)</p>
+                        <hr class="border-slate-800">
+                        <p><span class="text-sky-400">\(t\)-Interval (\(\sigma\) Unknown, \(s\) Given):</span></p>
+                        <p class="pl-3">\(\bar{x} \pm t_{\alpha/2} \left(\dfrac{s}{\sqrt{n}}\right), \quad df = n - 1\)</p>
+                    </div>
+                </div>
+
+                <!-- Formula Card 4: Margin of Error & Sample Size -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                        <h3 class="text-md font-bold text-pink-400">4. Sample Size Determination (\(n\))</h3>
+                        <span class="text-xs bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded">Slide 30</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-slate-300 font-mono-code bg-slate-900 p-3 rounded-xl border border-slate-700">
+                        <p><span class="text-slate-400">Margin of Error:</span> \(E = z_{\alpha/2} \cdot \dfrac{\sigma}{\sqrt{n}}\)</p>
+                        <p><span class="text-slate-400">Sample Size Formula:</span> \(n = \left(\dfrac{z_{\alpha/2} \cdot \sigma}{E}\right)^2\)</p>
+                        <p class="text-amber-300 font-sans text-xs">⚠️ Rule: Always round fractional \(n\) UP to nearest whole number!</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Quick Lookup Tables -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg space-y-4">
+                <h3 class="text-md font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-table text-statGold"></i>
+                    Common Exam Critical Values Reference
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- Standard Z-Critical Table -->
+                    <div>
+                        <div class="text-xs font-semibold text-slate-300 mb-2">Standard Normal Critical Values (\(z_{\alpha/2}\))</div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left text-slate-300 bg-slate-900 rounded-lg overflow-hidden border border-slate-700">
+                                <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-700">
+                                    <tr>
+                                        <th class="p-2">Confidence Level</th>
+                                        <th class="p-2">\(\alpha\)</th>
+                                        <th class="p-2">\(\alpha/2\)</th>
+                                        <th class="p-2 text-blue-400">\(z_{\alpha/2}\)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-slate-800">
+                                        <td class="p-2 font-bold text-white">90%</td>
+                                        <td class="p-2">0.10</td>
+                                        <td class="p-2">0.05</td>
+                                        <td class="p-2 font-mono text-amber-400">1.645</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-800">
+                                        <td class="p-2 font-bold text-white">95%</td>
+                                        <td class="p-2">0.05</td>
+                                        <td class="p-2">0.025</td>
+                                        <td class="p-2 font-mono text-amber-400">1.960</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 font-bold text-white">99%</td>
+                                        <td class="p-2">0.01</td>
+                                        <td class="p-2">0.005</td>
+                                        <td class="p-2 font-mono text-amber-400">2.576</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Student's t Lookup snippet -->
+                    <div>
+                        <div class="text-xs font-semibold text-slate-300 mb-2">Sample \(t\)-Table Excerpt (Slide 35)</div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left text-slate-300 bg-slate-900 rounded-lg overflow-hidden border border-slate-700">
+                                <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-700">
+                                    <tr>
+                                        <th class="p-2">\(df\ (n-1)\)</th>
+                                        <th class="p-2">\(t_{0.05}\) (90% CI)</th>
+                                        <th class="p-2 text-emerald-400">\(t_{0.025}\) (95% CI)</th>
+                                        <th class="p-2">\(t_{0.005}\) (99% CI)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-slate-800">
+                                        <td class="p-2 font-mono font-bold text-white">13</td>
+                                        <td class="p-2 font-mono">1.771</td>
+                                        <td class="p-2 font-mono text-emerald-400">2.160</td>
+                                        <td class="p-2 font-mono">3.012</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-800">
+                                        <td class="p-2 font-mono font-bold text-white">24 (Ex 5)</td>
+                                        <td class="p-2 font-mono">1.711</td>
+                                        <td class="p-2 font-mono text-emerald-400">2.064</td>
+                                        <td class="p-2 font-mono">2.797</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 font-mono font-bold text-white">\(\infty\) (\(Z\))</td>
+                                        <td class="p-2 font-mono">1.645</td>
+                                        <td class="p-2 font-mono text-emerald-400">1.960</td>
+                                        <td class="p-2 font-mono">2.576</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-800 border-t border-slate-700 py-4 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div>STAT1114 / STAT2044 Statistics for Data Analytics &bull; Lecture 4 Master Studio</div>
+            <div>Interactive Exam Preparation &amp; Study Tool</div>
+        </div>
+    </footer>
+
+    <!-- KaTeX JS loaded at end of body so DOM is ready (no defer needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <!-- JavaScript Core & Statistics Engine -->
+    <script>
+        /* ============================================================
+           KATEX: render all \(...\) and \[...\] delimiters in the page
+           ============================================================ */
+        function triggerMathRender(targetElement) {
+            if (typeof renderMathInElement !== 'function') return;
+            renderMathInElement(targetElement || document.body, {
+                delimiters: [
+                    { left: '\\(', right: '\\)', display: false },
+                    { left: '\\[', right: '\\]', display: true },
+                    { left: '$$', right: '$$', display: true }
+                ],
+                throwOnError: false
+            });
+        }
+
+        /* ==============================================================
+           1. MATHEMATICAL & STATISTICAL HELPERS
+           ============================================================== */
+
+        function standardNormalCDF(x) {
+            const z = Math.abs(x);
+            const t = 1 / (1 + 0.2316419 * z);
+            const d = 0.3989422804014327 * Math.exp(-0.5 * z * z);
+            let prob = d * t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+            return x >= 0 ? 1 - prob : prob;
+        }
+
+        function standardNormalPDF(x, mean, std) {
+            mean = mean === undefined ? 0 : mean;
+            std  = std  === undefined ? 1 : std;
+            const z = (x - mean) / std;
+            return (1 / (std * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z);
+        }
+
+        /* ==============================================================
+           2. TAB NAVIGATION & STATE MANAGEMENT
+           ============================================================== */
+
+        const state = {
+            checkedItems: new Set(),
+            cltSamples: [],
+            popData: [],
+            currentCase: 1
+        };
+
+        let cs1ChartInstance = null;
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow', 'font-semibold');
+                btn.classList.add('text-slate-400');
+            });
+
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('tab-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow', 'font-semibold');
+                activeBtn.classList.remove('text-slate-400');
+            }
+
+            if (tabId === 'clt-lab' && !cltPopChart) {
+                initCLTLab();
+            } else if (tabId === 'case-studies') {
+                loadCaseStudy(state.currentCase);
+            } else if (tabId === 'exam-quiz') {
+                // FIX: was always false because quizQuestions.length is 5, never 0
+                const container = document.getElementById('quizQuestionsContainer');
+                if (!container.hasChildNodes()) {
+                    generateNewQuiz();
+                }
+            }
+
+            triggerMathRender(document.getElementById('content-' + tabId));
+        }
+
+        function toggleCheck(id) {
+            const chk = document.getElementById(id);
+            if (chk.checked) { state.checkedItems.add(id); }
+            else { state.checkedItems.delete(id); }
+            updateReadinessScore();
+        }
+
+        function updateReadinessScore() {
+            const total = 7;
+            const score = Math.round((state.checkedItems.size / total) * 100);
+            document.getElementById('readinessScore').textContent = score;
+            document.getElementById('progressBar').style.width = score + '%';
+        }
+
+        function resetProgress() {
+            state.checkedItems.clear();
+            for (let i = 1; i <= 7; i++) {
+                const el = document.getElementById('chk' + i);
+                if (el) el.checked = false;
+            }
+            updateReadinessScore();
+        }
+
+
+        /* ==============================================================
+           3. CENTRAL LIMIT THEOREM (CLT) SIMULATOR ENGINE
+           ============================================================== */
+
+        let cltPopChart = null;
+        let cltSamplingChart = null;
+
+        function generatePopulation(shape) {
+            const data = [];
+            const N = 10000;
+            if (shape === 'skewed') {
+                for (let i = 0; i < N; i++) data.push(-Math.log(1 - Math.random()) * 2);
+            } else if (shape === 'uniform') {
+                for (let i = 0; i < N; i++) data.push(Math.random() * 10);
+            } else if (shape === 'bimodal') {
+                for (let i = 0; i < N; i++) {
+                    if (Math.random() < 0.5) data.push(2 + (Math.random() + Math.random() - 1) * 1.5);
+                    else data.push(8 + (Math.random() + Math.random() - 1) * 1.5);
+                }
+            } else {
+                for (let i = 0; i < N; i++) {
+                    const u1 = Math.random(), u2 = Math.random();
+                    data.push(5 + Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2) * 1.5);
+                }
+            }
+            state.popData = data;
+            return data;
+        }
+
+        function getHistogramData(data, minVal, maxVal, numBins) {
+            numBins = numBins || 25;
+            const step = (maxVal - minVal) / numBins;
+            const bins = new Array(numBins).fill(0);
+            const labels = [];
+            for (let i = 0; i < numBins; i++) labels.push((minVal + i * step + step / 2).toFixed(2));
+            data.forEach(function(v) {
+                let binIdx = Math.floor((v - minVal) / step);
+                if (binIdx < 0) binIdx = 0;
+                if (binIdx >= numBins) binIdx = numBins - 1;
+                bins[binIdx]++;
+            });
+            return { labels: labels, bins: bins };
+        }
+
+        function initCLTLab() {
+            const shape = document.getElementById('cltPopShape').value;
+            const popData = generatePopulation(shape);
+
+            const popMean = popData.reduce(function(a, b) { return a + b; }, 0) / popData.length;
+            const popVar  = popData.reduce(function(a, b) { return a + Math.pow(b - popMean, 2); }, 0) / popData.length;
+            const popStd  = Math.sqrt(popVar);
+
+            // FIX: use \(...\) delimiters instead of $...$ in dynamic HTML to avoid
+            // the KaTeX auto-render delimiter conflict with template literal ${}
+            document.getElementById('popStats').innerHTML =
+                '\\(\\mu=' + popMean.toFixed(2) + ',\\ \\sigma=' + popStd.toFixed(2) + '\\)';
+            triggerMathRender(document.getElementById('popStats'));
+
+            const histPop = getHistogramData(popData, 0, 10, 25);
+
+            const ctxPop = document.getElementById('chartPop').getContext('2d');
+            if (cltPopChart) cltPopChart.destroy();
+            cltPopChart = new Chart(ctxPop, {
+                type: 'bar',
+                data: {
+                    labels: histPop.labels,
+                    datasets: [{ label: 'Population Frequency', data: histPop.bins,
+                        backgroundColor: 'rgba(59,130,246,0.6)', borderColor: '#3b82f6',
+                        borderWidth: 1, barPercentage: 1.0, categoryPercentage: 1.0 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8', font: { size: 9 } } },
+                        y: { display: false }
+                    }
+                }
+            });
+
+            const ctxSamp = document.getElementById('chartSampling').getContext('2d');
+            if (cltSamplingChart) cltSamplingChart.destroy();
+            cltSamplingChart = new Chart(ctxSamp, {
+                type: 'bar',
+                data: {
+                    labels: histPop.labels,
+                    datasets: [{ label: 'Sample Means Frequency', data: new Array(25).fill(0),
+                        backgroundColor: 'rgba(20,184,166,0.7)', borderColor: '#14b8a6',
+                        borderWidth: 1, barPercentage: 1.0, categoryPercentage: 1.0 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8', font: { size: 9 } } },
+                        y: { display: false }
+                    }
+                }
+            });
+
+            state.cltSamples = [];
+            updateCLTDisplay();
+        }
+
+        function updateCLTSliderVal() {
+            const n = document.getElementById('cltSliderN').value;
+            const valEl = document.getElementById('cltValN');
+            valEl.innerHTML = '\\(n = ' + n + '\\)';
+            triggerMathRender(valEl);
+            resetCLTLab();
+        }
+
+        function resetCLTLab() { initCLTLab(); }
+
+        function runCLTSimulation(count) {
+            const n = parseInt(document.getElementById('cltSliderN').value, 10);
+            const pop = state.popData;
+            const popLen = pop.length;
+            for (let i = 0; i < count; i++) {
+                let sum = 0;
+                for (let j = 0; j < n; j++) sum += pop[Math.floor(Math.random() * popLen)];
+                state.cltSamples.push(sum / n);
+            }
+            updateCLTDisplay();
+        }
+
+        function updateCLTDisplay() {
+            const samples = state.cltSamples;
+            const M = samples.length;
+            document.getElementById('cltStatM').textContent = M;
+            if (M === 0) {
+                document.getElementById('cltStatMean').textContent = '0.00';
+                document.getElementById('cltStatSE').textContent = '0.00';
+                document.getElementById('cltNormalityCheck').textContent = 'Draw samples to observe shape...';
+                return;
+            }
+            const mean = samples.reduce(function(a, b) { return a + b; }, 0) / M;
+            const variance = samples.reduce(function(a, b) { return a + Math.pow(b - mean, 2); }, 0) / M;
+            document.getElementById('cltStatMean').textContent = mean.toFixed(2);
+            document.getElementById('cltStatSE').textContent = Math.sqrt(variance).toFixed(2);
+            const n = parseInt(document.getElementById('cltSliderN').value, 10);
+            const normEl = document.getElementById('cltNormalityCheck');
+            if (n >= 30) {
+                normEl.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i> Bell-shaped Normal (CLT Holds)';
+            } else {
+                normEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Small \\(n < 30\\): Influenced by population shape';
+                triggerMathRender(normEl);
+            }
+            const hist = getHistogramData(samples, 0, 10, 25);
+            cltSamplingChart.data.labels = hist.labels;
+            cltSamplingChart.data.datasets[0].data = hist.bins;
+            cltSamplingChart.update();
+        }
+
+
+        /* ==============================================================
+           4. CASE STUDIES EXPLORER MODULE
+           ============================================================== */
+
+        function loadCaseStudy(caseNum) {
+            state.currentCase = caseNum;
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.getElementById('csBtn' + i);
+                if (!btn) continue;
+                btn.className = (i === caseNum)
+                    ? 'cs-tab-btn active text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-500 text-slate-900 shadow'
+                    : 'cs-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 hover:text-white';
+            }
+            const container = document.getElementById('caseStudyContainer');
+
+            if (caseNum === 1) {
+                // FIX: All LaTeX now uses \(...\) delimiters so no JS string escaping conflicts.
+                container.innerHTML = [
+                    '<div class="space-y-4">',
+                    '  <div class="flex items-center justify-between border-b border-slate-700 pb-3">',
+                    '    <div>',
+                    '      <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Example 1 (Slide 12)</span>',
+                    '      <h3 class="text-lg font-bold text-white">Children Daily Screen Time Probability</h3>',
+                    '    </div>',
+                    '    <span class="text-xs bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full border border-blue-500/30">Normal Sampling Distribution</span>',
+                    '  </div>',
+                    '  <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-xs text-slate-300 leading-relaxed">',
+                    '    <strong>Slide Problem Statement:</strong> Qi, Yan and Yin (2023) reported that the average screen time for',
+                    '    children aged 6&ndash;14 was \\(\\mu = 2.77\\) hours/day with standard deviation \\(\\sigma = 0.5\\) hours.',
+                    '    If a random sample of \\(n = 20\\) children is selected, find the probability that their sample mean screen',
+                    '    time exceeds 2.5 hours: \\(P(\\bar{X} > 2.5)\\).',
+                    '  </div>',
+                    '  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">',
+                    '    <div class="space-y-4 bg-slate-900 p-4 rounded-xl border border-slate-700">',
+                    '      <h4 class="text-xs font-bold text-slate-200 uppercase">Adjust Parameters</h4>',
+                    '      <div>',
+                    '        <div class="flex justify-between text-xs text-slate-300 mb-1">',
+                    '          <span>Population Mean (\\(\\mu\\))</span>',
+                    '          <span id="cs1MuVal" class="text-amber-400 font-bold">2.77 hrs</span>',
+                    '        </div>',
+                    '        <input type="range" id="cs1Mu" min="1.0" max="5.0" step="0.01" value="2.77" oninput="calcCS1()" class="w-full accent-amber-400">',
+                    '      </div>',
+                    '      <div>',
+                    '        <div class="flex justify-between text-xs text-slate-300 mb-1">',
+                    '          <span>Population Std Dev (\\(\\sigma\\))</span>',
+                    '          <span id="cs1SigmaVal" class="text-amber-400 font-bold">0.50 hrs</span>',
+                    '        </div>',
+                    '        <input type="range" id="cs1Sigma" min="0.1" max="2.0" step="0.05" value="0.50" oninput="calcCS1()" class="w-full accent-amber-400">',
+                    '      </div>',
+                    '      <div>',
+                    '        <div class="flex justify-between text-xs text-slate-300 mb-1">',
+                    '          <span>Sample Size (\\(n\\))</span>',
+                    '          <span id="cs1NVal" class="text-teal-400 font-bold">n = 20</span>',
+                    '        </div>',
+                    '        <input type="range" id="cs1N" min="1" max="100" value="20" oninput="calcCS1()" class="w-full accent-teal-400">',
+                    '      </div>',
+                    '      <div>',
+                    '        <div class="flex justify-between text-xs text-slate-300 mb-1">',
+                    '          <span>Target Mean (\\(x\\))</span>',
+                    '          <span id="cs1XVal" class="text-blue-400 font-bold">2.50 hrs</span>',
+                    '        </div>',
+                    '        <input type="range" id="cs1X" min="1.0" max="4.0" step="0.05" value="2.50" oninput="calcCS1()" class="w-full accent-blue-400">',
+                    '      </div>',
+                    '    </div>',
+                    '    <div class="md:col-span-2 space-y-4">',
+                    '      <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 font-mono-code text-xs space-y-3">',
+                    '        <div class="text-slate-400 font-sans font-bold border-b border-slate-800 pb-1">Step-by-Step Exam Calculation:</div>',
+                    '        <div id="cs1Steps" class="space-y-2"></div>',
+                    '        <div class="pt-2 text-emerald-400 font-bold text-sm border-t border-slate-800">',
+                    '          Result: <span id="cs1Result">—</span>',
+                    '        </div>',
+                    '      </div>',
+                    '      <div class="h-44 bg-slate-900 p-3 rounded-xl border border-slate-700 relative">',
+                    '        <canvas id="cs1Chart"></canvas>',
+                    '      </div>',
+                    '    </div>',
+                    '  </div>',
+                    '</div>'
+                ].join('\n');
+                triggerMathRender(container);
+                calcCS1();
+
+            } else if (caseNum === 2) {
+                container.innerHTML = [
+                    '<div class="space-y-4">',
+                    '  <div class="flex items-center justify-between border-b border-slate-700 pb-3">',
+                    '    <div>',
+                    '      <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Example 2 (Slide 13)</span>',
+                    '      <h3 class="text-lg font-bold text-white">NYC 10-km Run Finishing Times Variance Squeeze</h3>',
+                    '    </div>',
+                    '    <span class="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full border border-amber-500/30">Single \\(X\\) vs Sample Mean \\(\\bar{X}\\)</span>',
+                    '  </div>',
+                    '  <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-xs text-slate-300 leading-relaxed">',
+                    '    <strong>Slide Problem Statement:</strong> Finishing times are normally distributed with \\(\\mu = 61\\) mins',
+                    '    and \\(\\sigma = 9\\) mins. Compare the probability of finishing within 5 mins of the mean',
+                    '    (\\(\\pm 5\\) mins, i.e., \\(56 < X < 66\\)) for a single runner (\\(n=1\\)) vs. a sample mean of four',
+                    '    runners (\\(n=4\\)).',
+                    '  </div>',
+                    '  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">',
+                    '    <div class="bg-slate-900 p-5 rounded-xl border border-slate-700 space-y-3">',
+                    '      <div class="font-bold text-blue-400 text-sm flex items-center justify-between">',
+                    '        <span>Single Runner (\\(n = 1\\))</span>',
+                    '        <span class="text-xs bg-blue-500/20 px-2 py-0.5 rounded">High Variation</span>',
+                    '      </div>',
+                    '      <div class="font-mono-code text-xs space-y-2 text-slate-300">',
+                    '        <p>\\(SE = \\dfrac{9}{\\sqrt{1}} = 9.0\\)</p>',
+                    '        <p>\\(Z_{\\text{lower}} = \\dfrac{56 - 61}{9} = -0.556\\)</p>',
+                    '        <p>\\(Z_{\\text{upper}} = \\dfrac{66 - 61}{9} = +0.556\\)</p>',
+                    '        <p class="text-blue-300 font-bold pt-2 border-t border-slate-800">\\(P(56 < X < 66) = 0.4246 \\quad (42.46\\%)\\)</p>',
+                    '      </div>',
+                    '    </div>',
+                    '    <div class="bg-slate-900 p-5 rounded-xl border border-slate-700 space-y-3">',
+                    '      <div class="font-bold text-emerald-400 text-sm flex items-center justify-between">',
+                    '        <span>Sample Mean (\\(n = 4\\))</span>',
+                    '        <span class="text-xs bg-emerald-500/20 px-2 py-0.5 rounded">Squeezed Standard Error</span>',
+                    '      </div>',
+                    '      <div class="font-mono-code text-xs space-y-2 text-slate-300">',
+                    '        <p>\\(SE = \\dfrac{9}{\\sqrt{4}} = 4.5\\)</p>',
+                    '        <p>\\(Z_{\\text{lower}} = \\dfrac{56 - 61}{4.5} = -1.111\\)</p>',
+                    '        <p>\\(Z_{\\text{upper}} = \\dfrac{66 - 61}{4.5} = +1.111\\)</p>',
+                    '        <p class="text-emerald-300 font-bold pt-2 border-t border-slate-800">\\(P(56 < \\bar{X} < 66) = 0.7330 \\quad (73.30\\%)\\)</p>',
+                    '      </div>',
+                    '    </div>',
+                    '  </div>',
+                    '  <div class="p-4 bg-blue-950/40 border border-blue-500/30 rounded-xl text-xs text-blue-200">',
+                    '    <strong>Professor Explanation:</strong> Taking a sample of size \\(n=4\\) increases the probability of being',
+                    '    within 5 minutes of the population mean from <strong>42.46% to 73.30%</strong>! This demonstrates why',
+                    '    larger samples give far more consistent estimates.',
+                    '  </div>',
+                    '</div>'
+                ].join('\n');
+                triggerMathRender(container);
+
+            } else if (caseNum === 3) {
+                container.innerHTML = [
+                    '<div class="space-y-4">',
+                    '  <div class="flex items-center justify-between border-b border-slate-700 pb-3">',
+                    '    <div>',
+                    '      <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Example 3 (Slide 18)</span>',
+                    '      <h3 class="text-lg font-bold text-white">Sample Proportion (\\(\\hat{p}\\)) iPhone Market Share</h3>',
+                    '    </div>',
+                    '    <span class="text-xs bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full border border-purple-500/30">Proportion \\(Z\\)-Test</span>',
+                    '  </div>',
+                    '  <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-xs text-slate-300 leading-relaxed">',
+                    '    <strong>Slide Problem Statement:</strong> It is postulated that \\(32\\%\\) of Malaysians own an iPhone',
+                    '    (\\(p = 0.32\\)). If a sample of \\(n = 200\\) is surveyed, find the probability that the sample',
+                    '    proportion exceeds \\(40\\%\\) (\\(\\hat{p} > 0.40\\)).',
+                    '  </div>',
+                    '  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">',
+                    '    <div class="space-y-4 bg-slate-900 p-4 rounded-xl border border-slate-700">',
+                    '      <h4 class="text-xs font-bold text-slate-200 uppercase">Interactive Sliders</h4>',
+                    '      <div>',
+                    '        <div class="flex justify-between text-xs text-slate-300 mb-1">',
+                    '          <span>Population Proportion (\\(p\\))</span>',
+                    '          <span id="cs3PVal" class="text-purple-400 font-bold">0.32</span>',
+                    '        </div>',
+                    '        <input type="range" id="cs3P" min="0.05" max="0.95" step="0.01" value="0.32" oninput="calcCS3()" class="w-full accent-purple-400">',
+                    '      </div>',
+                    '      <div>',
+                    '        <div class="flex justify-between text-xs text-slate-300 mb-1">',
+                    '          <span>Sample Size (\\(n\\))</span>',
+                    '          <span id="cs3NVal" class="text-teal-400 font-bold">n = 200</span>',
+                    '        </div>',
+                    '        <input type="range" id="cs3N" min="20" max="1000" step="10" value="200" oninput="calcCS3()" class="w-full accent-teal-400">',
+                    '      </div>',
+                    '      <div>',
+                    '        <div class="flex justify-between text-xs text-slate-300 mb-1">',
+                    '          <span>Sample Target (\\(\\hat{p}\\))</span>',
+                    '          <span id="cs3PHatVal" class="text-amber-400 font-bold">0.40</span>',
+                    '        </div>',
+                    '        <input type="range" id="cs3PHat" min="0.05" max="0.95" step="0.01" value="0.40" oninput="calcCS3()" class="w-full accent-amber-400">',
+                    '      </div>',
+                    '    </div>',
+                    '    <div class="md:col-span-2 bg-slate-900 p-4 rounded-xl border border-slate-700 font-mono-code text-xs space-y-3">',
+                    '      <div class="text-slate-400 font-sans font-bold border-b border-slate-800 pb-1">Proportion Z-Calculation:</div>',
+                    '      <div id="cs3Steps" class="space-y-2"></div>',
+                    '      <div class="pt-2 text-purple-400 font-bold text-sm border-t border-slate-800">',
+                    '        Result: <span id="cs3Result">—</span>',
+                    '      </div>',
+                    '    </div>',
+                    '  </div>',
+                    '</div>'
+                ].join('\n');
+                triggerMathRender(container);
+                calcCS3();
+
+            } else if (caseNum === 4) {
+                container.innerHTML = [
+                    '<div class="space-y-4">',
+                    '  <div class="flex items-center justify-between border-b border-slate-700 pb-3">',
+                    '    <div>',
+                    '      <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Example 4 (Slide 23, 27, 31)</span>',
+                    '      <h3 class="text-lg font-bold text-white">Cyber Security Prediction Time &amp; Sample Size Calculator</h3>',
+                    '    </div>',
+                    '    <span class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/30">One-Mean \\(Z\\)-Interval</span>',
+                    '  </div>',
+                    '  <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-xs text-slate-300 leading-relaxed">',
+                    '    <strong>Slide Problem Statement:</strong> Intrusion detection algorithm time for \\(n = 50\\) runs yielded',
+                    '    sample mean \\(\\bar{x} = 36.4\\) s. Assume population standard deviation \\(\\sigma = 12.1\\) s.',
+                    '    Find a \\(95\\%\\) confidence interval and determine sample size needed for Margin of Error \\(E = 0.5\\) s.',
+                    '  </div>',
+                    '  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">',
+                    '    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-3 font-mono-code text-xs">',
+                    '      <div class="font-sans font-bold text-emerald-400 text-sm">Part A: 95% Confidence Interval</div>',
+                    '      <p>Critical \\(z_{0.025} = 1.96\\)</p>',
+                    '      <p>Margin of Error \\(E = 1.96 \\cdot \\dfrac{12.1}{\\sqrt{50}} = 3.35\\) s</p>',
+                    '      <p class="text-white font-bold">Interval: \\(36.4 \\pm 3.35 \\rightarrow [33.05,\\ 39.75]\\) seconds</p>',
+                    '      <div class="p-3 bg-slate-800 rounded border border-slate-700 font-sans text-slate-300 text-xs">',
+                    '        <em>Interpretation:</em> We are 95% confident that the true population mean prediction time',
+                    '        \\(\\mu\\) lies between 33.05 and 39.75 seconds.',
+                    '      </div>',
+                    '    </div>',
+                    '    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-3 font-mono-code text-xs">',
+                    '      <div class="font-sans font-bold text-pink-400 text-sm">Part B: Required Sample Size for \\(E = 0.5\\) s</div>',
+                    '      <p>Formula: \\(n = \\left(\\dfrac{z_{\\alpha/2} \\cdot \\sigma}{E}\\right)^2\\)</p>',
+                    '      <p>\\(n = \\left(\\dfrac{1.96 \\times 12.1}{0.5}\\right)^2 = 2249.79\\)</p>',
+                    '      <p class="text-pink-300 font-bold font-sans text-sm pt-2 border-t border-slate-800">',
+                    '        Required \\(n = 2250\\) runs (Rounded UP)',
+                    '      </p>',
+                    '    </div>',
+                    '  </div>',
+                    '</div>'
+                ].join('\n');
+                triggerMathRender(container);
+
+            } else if (caseNum === 5) {
+                container.innerHTML = [
+                    '<div class="space-y-4">',
+                    '  <div class="flex items-center justify-between border-b border-slate-700 pb-3">',
+                    '    <div>',
+                    '      <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Example 5 (Slide 36)</span>',
+                    '      <h3 class="text-lg font-bold text-white">YouTube Watching Hours Studentized \\(t\\)-Interval</h3>',
+                    '    </div>',
+                    '    <span class="text-xs bg-sky-500/20 text-sky-300 px-3 py-1 rounded-full border border-sky-500/30">One-Mean \\(t\\)-Interval (\\(\\sigma\\) Unknown)</span>',
+                    '  </div>',
+                    '  <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-xs text-slate-300 leading-relaxed">',
+                    '    <strong>Slide Problem Statement:</strong> Sample of \\(n = 25\\) adults yielded mean',
+                    '    \\(\\bar{x} = 513.32\\) hours/year and sample standard deviation \\(s = 262.23\\) hours.',
+                    '    Find a \\(95\\%\\) confidence interval for \\(\\mu\\).',
+                    '  </div>',
+                    '  <div class="bg-slate-900 p-5 rounded-xl border border-slate-700 font-mono-code text-xs space-y-3">',
+                    '    <div class="font-sans font-bold text-sky-400 text-sm">Step-by-Step t-Interval Solution:</div>',
+                    '    <p>1. Degrees of Freedom \\(df = n - 1 = 25 - 1 = 24\\)</p>',
+                    '    <p>2. Critical Value from t-Table (Slide 35): \\(t_{0.025,\\, df=24} = 2.064\\)</p>',
+                    '    <p>3. Margin of Error \\(E = t_{\\alpha/2} \\cdot \\dfrac{s}{\\sqrt{n}} = 2.064 \\cdot \\dfrac{262.23}{\\sqrt{25}} = 108.24\\) hrs</p>',
+                    '    <p class="text-emerald-400 font-bold text-sm pt-2 border-t border-slate-800 font-sans">',
+                    '      95% CI: \\(513.32 \\pm 108.24 \\rightarrow [405.08,\\ 621.56]\\) hours/year',
+                    '    </p>',
+                    '  </div>',
+                    '</div>'
+                ].join('\n');
+                triggerMathRender(container);
+            }
+        }
+
+        function calcCS1() {
+            const mu    = parseFloat(document.getElementById('cs1Mu').value);
+            const sigma = parseFloat(document.getElementById('cs1Sigma').value);
+            const n     = parseInt(document.getElementById('cs1N').value, 10);
+            const x     = parseFloat(document.getElementById('cs1X').value);
+
+            document.getElementById('cs1MuVal').textContent    = mu.toFixed(2) + ' hrs';
+            document.getElementById('cs1SigmaVal').textContent = sigma.toFixed(2) + ' hrs';
+            document.getElementById('cs1NVal').textContent     = 'n = ' + n;
+            document.getElementById('cs1XVal').textContent     = x.toFixed(2) + ' hrs';
+
+            const se         = sigma / Math.sqrt(n);
+            const z          = (x - mu) / se;
+            const probLower  = standardNormalCDF(z);
+            const probUpper  = 1 - probLower;
+
+            // FIX: Build step strings using string concatenation with explicit \\(...\\) delimiters
+            // so there is no ambiguity with JS template literal ${} syntax and KaTeX $ delimiters.
+            const stepsContainer = document.getElementById('cs1Steps');
+            if (stepsContainer) {
+                stepsContainer.innerHTML =
+                    '<p>1. Standard Error \\(SE = \\dfrac{\\sigma}{\\sqrt{n}} = \\dfrac{' + sigma.toFixed(2) + '}{\\sqrt{' + n + '}} = \\mathbf{' + se.toFixed(4) + '}\\)</p>' +
+                    '<p>2. Z-score: \\(Z = \\dfrac{x - \\mu}{SE} = \\dfrac{' + x.toFixed(2) + ' - ' + mu.toFixed(2) + '}{' + se.toFixed(4) + '} = \\mathbf{' + z.toFixed(3) + '}\\)</p>' +
+                    '<p>3. Probability: \\(P(\\bar{X} > ' + x.toFixed(2) + ') = P(Z > ' + z.toFixed(3) + ') = 1 - ' + probLower.toFixed(4) + ' = \\mathbf{' + probUpper.toFixed(4) + '}\\)</p>';
+                triggerMathRender(stepsContainer);
+            }
+
+            document.getElementById('cs1Result').textContent = (probUpper * 100).toFixed(2) + '% probability';
+
+            // FIX: Use two datasets (left and right of z) so Chart.js can fill each
+            // region with its own colour. Per-point backgroundColor on fill:true is not
+            // supported in Chart.js 3/4 — it only uses the first colour for the whole fill.
+            const canvas = document.getElementById('cs1Chart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            const xVals = [], leftData = [], rightData = [];
+            for (let xi = -3.5; xi <= 3.5; xi = Math.round((xi + 0.1) * 10) / 10) {
+                const label = xi.toFixed(1);
+                const pdfVal = standardNormalPDF(xi);
+                xVals.push(label);
+                leftData.push(xi  <= z ? pdfVal : null);   // blue region (left)
+                rightData.push(xi >= z ? pdfVal : null);   // green region (right / P(Z>z))
+            }
+
+            if (cs1ChartInstance) cs1ChartInstance.destroy();
+            cs1ChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: xVals,
+                    datasets: [
+                        {
+                            label: 'Left area',
+                            data: leftData,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59,130,246,0.20)',
+                            fill: true,
+                            pointRadius: 0,
+                            tension: 0.3,
+                            spanGaps: false
+                        },
+                        {
+                            label: 'Right area (probability)',
+                            data: rightData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16,185,129,0.40)',
+                            fill: true,
+                            pointRadius: 0,
+                            tension: 0.3,
+                            spanGaps: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { display: false }, y: { display: false } }
+                }
+            });
+        }
+
+        function calcCS3() {
+            const p    = parseFloat(document.getElementById('cs3P').value);
+            const n    = parseInt(document.getElementById('cs3N').value, 10);
+            const pHat = parseFloat(document.getElementById('cs3PHat').value);
+
+            document.getElementById('cs3PVal').textContent    = p.toFixed(2);
+            document.getElementById('cs3NVal').textContent    = 'n = ' + n;
+            document.getElementById('cs3PHatVal').textContent = pHat.toFixed(2);
+
+            const se        = Math.sqrt((p * (1 - p)) / n);
+            const z         = (pHat - p) / se;
+            const probLower = standardNormalCDF(z);
+            const probUpper = 1 - probLower;
+
+            const stepsContainer = document.getElementById('cs3Steps');
+            if (stepsContainer) {
+                stepsContainer.innerHTML =
+                    '<p>1. Standard Error \\(SE = \\sqrt{\\dfrac{p(1-p)}{n}} = \\sqrt{\\dfrac{' + p.toFixed(2) + '\\times ' + (1 - p).toFixed(2) + '}{' + n + '}} = \\mathbf{' + se.toFixed(4) + '}\\)</p>' +
+                    '<p>2. Z-Score: \\(Z = \\dfrac{\\hat{p} - p}{SE} = \\dfrac{' + pHat.toFixed(2) + ' - ' + p.toFixed(2) + '}{' + se.toFixed(4) + '} = \\mathbf{' + z.toFixed(3) + '}\\)</p>' +
+                    '<p>3. Upper Tail: \\(P(Z > ' + z.toFixed(3) + ') = 1 - ' + probLower.toFixed(4) + ' = \\mathbf{' + probUpper.toFixed(4) + '}\\)</p>';
+                triggerMathRender(stepsContainer);
+            }
+            document.getElementById('cs3Result').textContent = (probUpper * 100).toFixed(2) + '% probability';
+        }
+
+
+        /* ==============================================================
+           5. INTERACTIVE EXAM PRACTICE & QUIZ ENGINE
+           ============================================================== */
+
+        // FIX: All LaTeX in JS strings now uses \\ (double-backslash) so the actual
+        // string value contains a single \, which KaTeX can parse correctly.
+        // Previously, \mu → "mu" (backslash dropped by JS), \sigma → "sigma", etc.
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "According to the Central Limit Theorem, if the parent population is heavily skewed to the right, what sample size \\(n\\) is generally required for the sampling distribution of the sample mean to be approximately normal?",
+                options: [
+                    "\\(n \\ge 5\\)",
+                    "\\(n \\ge 15\\)",
+                    "\\(n \\ge 30\\)",
+                    "\\(n\\) must equal the population size \\(N\\)"
+                ],
+                correct: 2,
+                explanation: "Slide 11 states that as sample size increases (typically \\(n \\ge 30\\)), the sampling distribution of the sample mean approaches a normal distribution regardless of the population shape."
+            },
+            {
+                id: 2,
+                question: "In constructing a 95% confidence interval for a population mean, if you increase the sample size \\(n\\) from 50 to 200, what happens to the width of the confidence interval?",
+                options: [
+                    "The interval becomes wider (less precise).",
+                    "The interval becomes narrower (more precise).",
+                    "The width remains unchanged because confidence level is still 95%.",
+                    "The interval shifts to the right."
+                ],
+                correct: 1,
+                explanation: "Because standard error \\(SE = \\dfrac{\\sigma}{\\sqrt{n}}\\), increasing \\(n\\) enlarges the denominator, reducing standard error and narrowing the margin of error (Slide 28)."
+            },
+            {
+                id: 3,
+                // FIX: was "$\sigma$" → JS string gives "sigma" (backslash dropped). Now "\\(\\sigma\\)".
+                question: "When estimating a population mean where the population standard deviation \\(\\sigma\\) is UNKNOWN and replaced by sample standard deviation \\(s\\), which distribution procedure must be used?",
+                options: [
+                    "One-Mean \\(Z\\)-Interval Procedure",
+                    "One-Mean Student's \\(t\\)-Interval Procedure",
+                    "Binomial Proportion Procedure",
+                    "Uniform Distribution Procedure"
+                ],
+                correct: 1,
+                explanation: "Slide 33&ndash;34 specifies that when \\(\\sigma\\) is unknown, we use Student's \\(t\\)-distribution with \\(df = n - 1\\)."
+            },
+            {
+                id: 4,
+                // FIX: was "$\sigma = 12.1$" → "sigma = 12.1" (backslash dropped). Now "\\(\\sigma = 12.1\\)".
+                question: "A market analyst wants to estimate mean response time within a margin of error \\(E = 0.5\\) seconds with 95% confidence (\\(z = 1.96\\)). If \\(\\sigma = 12.1\\), the sample size calculation gives \\(n = 2249.12\\). What is the required sample size?",
+                options: [
+                    "2249",
+                    "2250",
+                    "2200",
+                    "2500"
+                ],
+                correct: 1,
+                explanation: "Slide 30 rule: Sample size \\(n\\) calculated for margin of error specifications must ALWAYS be rounded up to the nearest whole integer (\\(2249.12 \\rightarrow 2250\\))."
+            },
+            {
+                id: 5,
+                // FIX: was "$\mu$" → "mu" (backslash dropped). Now "\\(\\mu\\)".
+                question: "Which of the following statistics is a point estimate for the population parameter \\(\\mu\\)?",
+                options: [
+                    "Sample standard deviation (\\(s\\))",
+                    "Sample mean (\\(\\bar{X}\\))",
+                    "Sample proportion (\\(\\hat{p}\\))",
+                    "Z-score"
+                ],
+                correct: 1,
+                explanation: "Slide 22: A point estimate is a single sample statistic used to estimate a population parameter. The sample mean \\(\\bar{X}\\) is the point estimate for population mean \\(\\mu\\)."
+            }
+        ];
+
+        let userAnswers = {};
+
+        function generateNewQuiz() {
+            userAnswers = {};
+            document.getElementById('quizScoreDisplay').textContent = '0 / 5';
+            const container = document.getElementById('quizQuestionsContainer');
+            container.innerHTML = '';
+
+            quizQuestions.forEach(function(q, idx) {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900 border border-slate-700 rounded-xl p-5 space-y-3';
+                card.innerHTML =
+                    '<div class="font-bold text-white text-sm flex items-start gap-2">' +
+                    '  <span class="bg-purple-500/20 text-purple-300 text-xs px-2 py-0.5 rounded border border-purple-500/30">Q' + (idx + 1) + '</span>' +
+                    '  <span>' + q.question + '</span>' +
+                    '</div>' +
+                    '<div class="space-y-2 mt-2">' +
+                    q.options.map(function(opt, optIdx) {
+                        return '<label class="flex items-center gap-3 p-3 bg-slate-800 hover:bg-slate-700/60 rounded-lg cursor-pointer border border-slate-700 text-xs text-slate-200 transition">' +
+                               '  <input type="radio" name="q_' + q.id + '" value="' + optIdx + '" onchange="selectAnswer(' + q.id + ',' + optIdx + ')" class="text-purple-600 focus:ring-purple-500">' +
+                               '  <span>' + opt + '</span>' +
+                               '</label>';
+                    }).join('') +
+                    '</div>' +
+                    '<div id="quizExplain_' + q.id + '" class="hidden p-3 bg-slate-950 rounded-lg border border-slate-800 text-xs leading-relaxed"></div>';
+                container.appendChild(card);
+            });
+            triggerMathRender(container);
+        }
+
+        function selectAnswer(qId, selectedIdx) {
+            userAnswers[qId] = selectedIdx;
+            const q = quizQuestions.find(function(item) { return item.id === qId; });
+            const explainDiv = document.getElementById('quizExplain_' + qId);
+            explainDiv.classList.remove('hidden');
+            if (selectedIdx === q.correct) {
+                explainDiv.innerHTML = '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check"></i> Correct!</span> <span class="text-slate-300">' + q.explanation + '</span>';
+            } else {
+                explainDiv.innerHTML = '<span class="text-rose-400 font-bold"><i class="fa-solid fa-circle-xmark"></i> Incorrect.</span> <span class="text-slate-300">' + q.explanation + '</span>';
+            }
+            triggerMathRender(explainDiv);
+
+            let correctCount = 0;
+            quizQuestions.forEach(function(item) {
+                if (userAnswers[item.id] === item.correct) correctCount++;
+            });
+            document.getElementById('quizScoreDisplay').textContent = correctCount + ' / ' + quizQuestions.length;
+        }
+
+
+        /* ==============================================================
+           6. APP INITIALIZATION
+           ============================================================== */
+        window.addEventListener('DOMContentLoaded', function() {
+            // KaTeX scripts are loaded synchronously at end of body, so
+            // renderMathInElement is available by the time DOMContentLoaded fires.
+            triggerMathRender(document.body);
+            switchTab('checklist');
+            generateNewQuiz(); // pre-populate quiz so Tab 4 is ready immediately
+        });
+    </script>
+</body>
+</html>
