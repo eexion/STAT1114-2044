@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAT1114 / STAT2044: Probability Distributions Exam Master</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for statistics visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- KaTeX CSS & JS for formula rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#0f172a'
+                        },
+                        statGold: '#f59e0b',
+                        statTeal: '#0d9488',
+                        statPurple: '#8b5cf6'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono-code { font-family: 'Fira Code', monospace; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- TOP HEADER / PROFESSOR BANNER -->
+    <header class="bg-slate-800/90 border-b border-slate-700/80 sticky top-0 z-50 backdrop-blur">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-blue-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
+                        <i class="fa-solid fa-chart-pie text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">STAT1114 / STAT2044</span>
+                            <span class="text-xs text-slate-400">Lecture 03 Study Companion</span>
+                        </div>
+                        <h1 class="text-lg font-bold text-white tracking-tight">Probability Distributions Master Studio</h1>
+                    </div>
+                </div>
+
+                <!-- Exam Readiness Score & Progress Meter -->
+                <div class="flex items-center space-x-6 bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-700/60">
+                    <div>
+                        <div class="text-xs text-slate-400 font-medium">Exam Readiness</div>
+                        <div class="text-sm font-bold text-emerald-400 flex items-center gap-1">
+                            <span id="readinessScore">0</span>% Ready
+                            <i class="fa-solid fa-circle-check text-xs text-emerald-400"></i>
+                        </div>
+                    </div>
+                    <div class="w-28 bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                        <div id="progressBar" class="bg-gradient-to-r from-purple-500 to-emerald-400 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <button onclick="resetProgress()" class="text-slate-400 hover:text-rose-400 text-xs transition" title="Reset Study Progress">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP NAVIGATION TABS -->
+    <div class="bg-slate-800 border-b border-slate-700 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex space-x-1 sm:space-x-4 overflow-x-auto custom-scrollbar py-2 text-xs sm:text-sm font-medium">
+            <button onclick="switchTab('checklist')" id="tab-checklist" class="tab-btn active px-4 py-2.5 rounded-lg flex items-center gap-2 transition text-white bg-purple-600 font-semibold shadow">
+                <i class="fa-solid fa-list-check text-purple-200"></i>
+                <span>1. Core Concepts & Checklist</span>
+            </button>
+            <button onclick="switchTab('sim-lab')" id="tab-sim-lab" class="tab-btn px-4 py-2.5 rounded-lg flex items-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-700/50">
+                <i class="fa-solid fa-sliders text-teal-400"></i>
+                <span>2. Interactive Distribution Lab</span>
+            </button>
+            <button onclick="switchTab('case-studies')" id="tab-case-studies" class="tab-btn px-4 py-2.5 rounded-lg flex items-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-700/50">
+                <i class="fa-solid fa-book-open text-amber-400"></i>
+                <span>3. Slide Case Studies Visualizer</span>
+            </button>
+            <button onclick="switchTab('exam-quiz')" id="tab-exam-quiz" class="tab-btn px-4 py-2.5 rounded-lg flex items-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-700/50">
+                <i class="fa-solid fa-pen-to-square text-blue-400"></i>
+                <span>4. Exam Practice & Quiz</span>
+            </button>
+            <button onclick="switchTab('formula-sheet')" id="tab-formula-sheet" class="tab-btn px-4 py-2.5 rounded-lg flex items-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-700/50">
+                <i class="fa-solid fa-square-root-variable text-pink-400"></i>
+                <span>5. Formula Sheet & Reference</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: CORE CONCEPTS & CHECKLIST -->
+        <!-- ========================================== -->
+        <section id="content-checklist" class="tab-content space-y-6">
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-purple-900/60 via-slate-800 to-indigo-900/50 border border-purple-500/30 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                <div class="flex items-start gap-4 z-10 relative">
+                    <div class="w-14 h-14 rounded-full bg-slate-800 border-2 border-purple-400 flex-shrink-0 flex items-center justify-center text-purple-400 shadow-md">
+                        <i class="fa-solid fa-user-graduate text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            Guidance: Topic 3 Blueprint
+                        </h2>
+                        <p class="text-sm text-slate-300 mt-1 leading-relaxed">
+                            Welcome, Data Analytics students! Lecture 03 covers the mathematical foundation of <span class="text-purple-300 font-semibold">Probability Distributions</span>. In your final exam, you will be assessed on: <span class="text-blue-300 font-semibold">1. Random variables & PMF/PDF properties</span>, <span class="text-amber-300 font-semibold">2. Expected value $E(X)$ and Variance $Var(X)$</span>, <span class="text-emerald-300 font-semibold">3. Binomial Distribution</span>, and <span class="text-teal-300 font-semibold">4. Poisson Distribution & Rate Scaling</span>. Check off items as you master each concept!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Checklist Interactive Items -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-purple-400"></i>
+                            Key Learning Objectives Checklist
+                        </h3>
+                        <span class="text-xs text-slate-400">Click items to mark progress</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <!-- Item 1 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk1')" id="chk1" class="mt-1 w-5 h-5 rounded border-slate-600 text-purple-600 focus:ring-purple-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        Discrete vs. Continuous Random Variables
+                                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded border border-purple-500/30">Slides 4-6</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        A <strong>Discrete</strong> random variable takes countable values (e.g. number of purchases, YouTube subscribers). A <strong>Continuous</strong> variable assumes values in a continuous range (e.g. annual income, delivery wait time).
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Item 2 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk2')" id="chk2" class="mt-1 w-5 h-5 rounded border-slate-600 text-purple-600 focus:ring-purple-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        Probability Mass Function (PMF) & Validation Rules
+                                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded border border-blue-500/30">Slide 8-9</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        A PMF lists $P(X=x)$ for each value. Requirements: $0 \le P(X=x) \le 1$ for all $x$, and $\sum P(X=x) = 1.0$.
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Item 3 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk3')" id="chk3" class="mt-1 w-5 h-5 rounded border-slate-600 text-purple-600 focus:ring-purple-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        Expected Value $E(X)$ & Variance $Var(X)$
+                                        <span class="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">Slide 10-11</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        Mean $\mu = E(X) = \sum x P(X=x)$. Variance $Var(X) = \sigma^2 = \sum x^2 P(X=x) - \mu^2$. Standard deviation $\sigma = \sqrt{Var(X)}$.
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Item 4 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk4')" id="chk4" class="mt-1 w-5 h-5 rounded border-slate-600 text-purple-600 focus:ring-purple-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        Bernoulli Trials & Binomial Distribution
+                                        <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">Slide 13-15</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        Requires fixed $n$ independent trials, 2 outcomes (Success/Failure), and constant probability $p$. Formula: $P(X=x) = \binom{n}{x} p^x (1-p)^{n-x}$. Mean $\mu = np$, $\sigma = \sqrt{np(1-p)}$.
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Item 5 -->
+                        <div class="checklist-item bg-slate-800 border border-slate-700 rounded-xl p-4 transition hover:border-slate-600">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" onchange="toggleCheck('chk5')" id="chk5" class="mt-1 w-5 h-5 rounded border-slate-600 text-purple-600 focus:ring-purple-500 bg-slate-900">
+                                <div>
+                                    <div class="font-semibold text-white flex items-center gap-2">
+                                        Poisson Distribution & Time Window Scaling
+                                        <span class="text-xs bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded border border-teal-500/30">Slide 16-19</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        Models frequency of events per unit time/space. Parameter $\lambda$ is both mean and variance! Formula: $P(X=x) = \frac{e^{-\lambda}\lambda^x}{x!}$. Remember to scale $\lambda$ for different time intervals (e.g. 15/hr $\rightarrow \lambda = 1.25$ per 5 min).
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decision Tree Widget -->
+                <div class="space-y-4">
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
+                        <h3 class="text-md font-bold text-white mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-sitemap text-statGold"></i>
+                            Exam Decision Tree: Which Distribution?
+                        </h3>
+                        <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+                            How to quickly identify the model in exam questions:
+                        </p>
+
+                        <div class="space-y-3 text-xs">
+                            <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
+                                <div class="font-bold text-amber-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-list-ol"></i> 1. Is it Discrete or Continuous?
+                                </div>
+                                <div class="text-slate-300 mt-1 ml-4">
+                                    • Countable numbers ($0, 1, 2, ...$) $\rightarrow$ Discrete PMF.<br>
+                                    • Interval/Measurement (time, money) $\rightarrow$ Continuous PDF.
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
+                                <div class="font-bold text-emerald-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-toggle-on"></i> 2. Fixed number of $n$ trials?
+                                </div>
+                                <div class="text-slate-300 mt-1 ml-4">
+                                    • YES (Success/Failure, fixed $n$, constant $p$) $\rightarrow$ <strong>Binomial</strong> $B(n, p)$.
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
+                                <div class="font-bold text-teal-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-clock"></i> 3. Rate over time/space?
+                                </div>
+                                <div class="text-slate-300 mt-1 ml-4">
+                                    • YES (Average occurrences $\lambda$ per hour/day/min) $\rightarrow$ <strong>Poisson</strong> $Pois(\lambda)$.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exam Tip Box -->
+                    <div class="bg-purple-500/10 border border-purple-500/30 rounded-2xl p-4 text-xs text-purple-200">
+                        <div class="font-bold text-purple-400 flex items-center gap-2 mb-1">
+                            <i class="fa-solid fa-lightbulb"></i> Tips, Common Mistake Warning
+                        </div>
+                        <p class="leading-relaxed">
+                            In Poisson problems, always check the <strong>time interval</strong> in the question! If average rate is given per hour but asked for a 5-minute window, adjust $\lambda = \text{rate} \times \frac{5}{60}$.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 2: INTERACTIVE DISTRIBUTION LAB -->
+        <!-- ========================================== -->
+        <section id="content-sim-lab" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-700">
+                    <div>
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-teal-400"></i>
+                            Interactive Probability Distribution Visualizer & Simulation Lab
+                        </h2>
+                        <p class="text-xs text-slate-400">
+                            Adjust parameters dynamically to explore PMFs, expected values, shapes, and tail probabilities.
+                        </p>
+                    </div>
+                    
+                    <!-- Distribution Switcher Controls -->
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="switchLabSubtab('binomial')" id="labSubBtn-binomial" class="lab-sub-btn active px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold shadow transition">
+                            <i class="fa-solid fa-chart-column"></i> Binomial
+                        </button>
+                        <button onclick="switchLabSubtab('poisson')" id="labSubBtn-poisson" class="lab-sub-btn px-3 py-1.5 bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-semibold transition">
+                            <i class="fa-solid fa-wave-square"></i> Poisson
+                        </button>
+                        <button onclick="switchLabSubtab('custom-pmf')" id="labSubBtn-custom-pmf" class="lab-sub-btn px-3 py-1.5 bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-semibold transition">
+                            <i class="fa-solid fa-table-list"></i> Discrete PMF $E(X)$
+                        </button>
+                        <button onclick="switchLabSubtab('normal')" id="labSubBtn-normal" class="lab-sub-btn px-3 py-1.5 bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-semibold transition">
+                            <i class="fa-solid fa-bell"></i> Normal PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 1: BINOMIAL EXPLORER -->
+                <div id="labSub-binomial" class="lab-sub-content space-y-4 mt-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-3">
+                            <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Binomial Parameters</h4>
+                            
+                            <div>
+                                <div class="flex justify-between text-xs text-slate-300 mb-1">
+                                    <span>Number of Trials ($n$)</span>
+                                    <span id="binomNVal" class="text-emerald-400 font-bold">n = 4</span>
+                                </div>
+                                <input type="range" id="binomN" min="1" max="40" value="4" oninput="updateBinomialLab()" class="w-full accent-emerald-400 cursor-pointer">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs text-slate-300 mb-1">
+                                    <span>Success Probability ($p$)</span>
+                                    <span id="binomPVal" class="text-emerald-400 font-bold">p = 0.75</span>
+                                </div>
+                                <input type="range" id="binomP" min="0.05" max="0.95" step="0.05" value="0.75" oninput="updateBinomialLab()" class="w-full accent-emerald-400 cursor-pointer">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs text-slate-300 mb-1">
+                                    <span>Target Successes ($x$)</span>
+                                    <span id="binomXVal" class="text-amber-400 font-bold">x = 2</span>
+                                </div>
+                                <input type="range" id="binomX" min="0" max="4" value="2" oninput="updateBinomialLab()" class="w-full accent-amber-400 cursor-pointer">
+                            </div>
+
+                            <button onclick="loadLaptopPreset()" class="w-full py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-laptop"></i> Load Laptop Shock Preset (Slide 15)
+                            </button>
+                        </div>
+
+                        <!-- Binomial Stats & Calculation -->
+                        <div class="sm:col-span-2 bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col justify-between">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center border-b border-slate-800 pb-3">
+                                <div>
+                                    <div class="text-xs text-slate-400">Mean ($\mu = np$)</div>
+                                    <div id="binomMean" class="text-base font-bold text-emerald-400">3.00</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400">Variance ($\sigma^2$)</div>
+                                    <div id="binomVar" class="text-base font-bold text-teal-400">0.75</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400">Std Dev ($\sigma$)</div>
+                                    <div id="binomStd" class="text-base font-bold text-amber-400">0.866</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400">$P(X = x)$</div>
+                                    <div id="binomExactProb" class="text-base font-bold text-purple-400">0.2109</div>
+                                </div>
+                            </div>
+
+                            <div class="py-2 text-xs font-mono-code space-y-1 text-slate-300">
+                                <div id="binomFormulaStep">$P(X=2) = \binom{4}{2}(0.75)^2(0.25)^2 = 0.2109$</div>
+                                <div id="binomCumulativeStep" class="text-slate-400 text-xs">$P(X \le 2) = 0.2617 \quad | \quad P(X \ge 2) = 0.9492$</div>
+                            </div>
+
+                            <div class="h-44 relative">
+                                <canvas id="chartBinomial"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 2: POISSON EXPLORER -->
+                <div id="labSub-poisson" class="lab-sub-content space-y-4 mt-4 hidden">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-3">
+                            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wider">Poisson Parameters</h4>
+                            
+                            <div>
+                                <div class="flex justify-between text-xs text-slate-300 mb-1">
+                                    <span>Average Rate ($\lambda$)</span>
+                                    <span id="poissonLambdaVal" class="text-teal-400 font-bold">λ = 2.00</span>
+                                </div>
+                                <input type="range" id="poissonLambda" min="0.25" max="15.0" step="0.25" value="2.00" oninput="updatePoissonLab()" class="w-full accent-teal-400 cursor-pointer">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs text-slate-300 mb-1">
+                                    <span>Target Value ($x$)</span>
+                                    <span id="poissonXVal" class="text-amber-400 font-bold">x = 0</span>
+                                </div>
+                                <input type="range" id="poissonX" min="0" max="20" value="0" oninput="updatePoissonLab()" class="w-full accent-amber-400 cursor-pointer">
+                            </div>
+
+                            <div class="pt-2 border-t border-slate-800 space-y-2">
+                                <button onclick="loadATMPreset1()" class="w-full py-1.5 bg-teal-500/20 hover:bg-teal-500/30 border border-teal-500/40 text-teal-300 text-xs font-semibold rounded-lg transition text-left px-2">
+                                    <i class="fa-solid fa-calculator"></i> ATM Hourly ($\lambda=2$, Slide 18)
+                                </button>
+                                <button onclick="loadATMPreset2()" class="w-full py-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-indigo-300 text-xs font-semibold rounded-lg transition text-left px-2">
+                                    <i class="fa-solid fa-clock"></i> ATM 5-Min Scaling ($\lambda=1.25$, Slide 19)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Poisson Stats & Chart -->
+                        <div class="sm:col-span-2 bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col justify-between">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center border-b border-slate-800 pb-3">
+                                <div>
+                                    <div class="text-xs text-slate-400">Mean ($\mu = \lambda$)</div>
+                                    <div id="poissonMean" class="text-base font-bold text-teal-400">2.00</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400">Variance ($\sigma^2 = \lambda$)</div>
+                                    <div id="poissonVar" class="text-base font-bold text-teal-400">2.00</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400">Std Dev ($\sigma = \sqrt{\lambda}$)</div>
+                                    <div id="poissonStd" class="text-base font-bold text-amber-400">1.414</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400">$P(X = x)$</div>
+                                    <div id="poissonExactProb" class="text-base font-bold text-purple-400">0.1353</div>
+                                </div>
+                            </div>
+
+                            <div class="py-2 text-xs font-mono-code space-y-1 text-slate-300">
+                                <div id="poissonFormulaStep">$P(X=0) = \frac{e^{-2} 2^0}{0!} = 0.1353$</div>
+                                <div id="poissonCumulativeStep" class="text-slate-400 text-xs">$P(X \ge 2) = 1 - P(X \le 1) = 0.5940$</div>
+                            </div>
+
+                            <div class="h-44 relative">
+                                <canvas id="chartPoisson"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 3: CUSTOM DISCRETE PMF & EXPECTED VALUE -->
+                <div id="labSub-custom-pmf" class="lab-sub-content space-y-4 mt-4 hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider">PMF Data Table</h4>
+                                <button onclick="loadPurchasesPreset()" class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/30 hover:bg-blue-500/30">
+                                    Load Slide 8 Example
+                                </button>
+                            </div>
+                            <p class="text-xs text-slate-400">Enter values $x$ and probabilities $P(X=x)$. Sum must equal 1.0.</p>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-xs text-center border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-800 text-slate-300">
+                                            <th class="p-1 border border-slate-700">$x$</th>
+                                            <th class="p-1 border border-slate-700">$P(X=x)$</th>
+                                            <th class="p-1 border border-slate-700">$x \cdot P(x)$</th>
+                                            <th class="p-1 border border-slate-700">$x^2 \cdot P(x)$</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="customPmfTableBody">
+                                        <!-- Dynamically generated rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div id="pmfSumCheck" class="text-xs font-semibold text-emerald-400 text-center">
+                                Total Probability $\sum P(x) = 1.00$ ✓
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-2 bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col justify-between space-y-4">
+                            <div class="grid grid-cols-3 gap-3 text-center border-b border-slate-800 pb-3">
+                                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                                    <div class="text-xs text-slate-400">Expected Value $E(X) = \mu$</div>
+                                    <div id="pmfMeanVal" class="text-lg font-bold text-blue-400">1.40</div>
+                                </div>
+                                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                                    <div class="text-xs text-slate-400">Variance $Var(X) = \sigma^2$</div>
+                                    <div id="pmfVarVal" class="text-lg font-bold text-teal-400">2.04</div>
+                                </div>
+                                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                                    <div class="text-xs text-slate-400">Std Dev $\sigma = \sqrt{Var}$</div>
+                                    <div id="pmfStdVal" class="text-lg font-bold text-amber-400">1.4283</div>
+                                </div>
+                            </div>
+
+                            <div class="font-mono-code text-xs text-slate-300 bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1">
+                                <div id="pmfStep1">$E(X) = 0(0.35) + 1(0.25) + 2(0.20) + 3(0.10) + 4(0.05) + 5(0.05) = \mathbf{1.40}$</div>
+                                <div id="pmfStep2">$Var(X) = \sum x^2 P(x) - \mu^2 = 4.00 - (1.40)^2 = \mathbf{2.04}$</div>
+                            </div>
+
+                            <div class="h-44 relative">
+                                <canvas id="chartCustomPmf"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 4: NORMAL PDF EXPLORER -->
+                <div id="labSub-normal" class="lab-sub-content space-y-4 mt-4 hidden">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-3">
+                            <h4 class="text-xs font-bold text-purple-400 uppercase tracking-wider">Continuous Normal PDF</h4>
+                            
+                            <div>
+                                <div class="flex justify-between text-xs text-slate-300 mb-1">
+                                    <span>Mean ($\mu$)</span>
+                                    <span id="normMuVal" class="text-purple-400 font-bold">μ = 0.0</span>
+                                </div>
+                                <input type="range" id="normMu" min="-10" max="10" step="0.5" value="0" oninput="updateNormalLab()" class="w-full accent-purple-400 cursor-pointer">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs text-slate-300 mb-1">
+                                    <span>Std Dev ($\sigma$)</span>
+                                    <span id="normSigmaVal" class="text-purple-400 font-bold">σ = 1.0</span>
+                                </div>
+                                <input type="range" id="normSigma" min="0.2" max="5.0" step="0.1" value="1.0" oninput="updateNormalLab()" class="w-full accent-purple-400 cursor-pointer">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs text-slate-300 mb-1">
+                                    <span>Cutoff Point ($x$)</span>
+                                    <span id="normXVal" class="text-amber-400 font-bold">x = 1.96</span>
+                                </div>
+                                <input type="range" id="normX" min="-5" max="5" step="0.05" value="1.96" oninput="updateNormalLab()" class="w-full accent-amber-400 cursor-pointer">
+                            </div>
+                        </div>
+
+                        <!-- Normal Stats & Chart -->
+                        <div class="sm:col-span-2 bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col justify-between">
+                            <div class="grid grid-cols-3 gap-3 text-center border-b border-slate-800 pb-3">
+                                <div>
+                                    <div class="text-xs text-slate-400">Z-Score</div>
+                                    <div id="normZVal" class="text-base font-bold text-amber-400">1.96</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400">$P(X \le x)$ Left Tail</div>
+                                    <div id="normLeftTail" class="text-base font-bold text-blue-400">0.9750</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400">$P(X > x)$ Right Tail</div>
+                                    <div id="normRightTail" class="text-base font-bold text-emerald-400">0.0250</div>
+                                </div>
+                            </div>
+
+                            <div class="h-44 relative mt-2">
+                                <canvas id="chartNormal"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 3: SLIDE CASE STUDIES EXPLORER -->
+        <!-- ========================================== -->
+        <section id="content-case-studies" class="tab-content space-y-6 hidden">
+            <!-- Case Study Navigation Buttons -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+                <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-book-bookmark text-amber-400"></i> Select Case Study from Slides:
+                </span>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="loadCaseStudy(1)" id="csBtn1" class="cs-tab-btn active text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-500 text-slate-900 shadow">
+                        Ex 1: Store Purchases PMF (p.8-11)
+                    </button>
+                    <button onclick="loadCaseStudy(2)" id="csBtn2" class="cs-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 hover:text-white">
+                        Ex 2: Laptop Shock Test (p.15)
+                    </button>
+                    <button onclick="loadCaseStudy(3)" id="csBtn3" class="cs-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 hover:text-white">
+                        Ex 3: ATM Hourly Arrivals (p.18)
+                    </button>
+                    <button onclick="loadCaseStudy(4)" id="csBtn4" class="cs-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 hover:text-white">
+                        Ex 4: ATM 5-Min Scaling (p.19)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Case View Container -->
+            <div id="caseStudyContainer" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
+                <!-- Injected dynamically via JavaScript -->
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 4: EXAM PRACTICE & QUIZ -->
+        <!-- ========================================== -->
+        <section id="content-exam-quiz" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-700">
+                    <div>
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square text-blue-400"></i>
+                            Final Exam Practice & Self-Assessment
+                        </h2>
+                        <p class="text-xs text-slate-400">
+                            Test your knowledge with problem types directly modeled after STAT1114/STAT2044 exam questions.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="text-xs bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 font-mono">
+                            Score: <span id="quizScoreDisplay" class="text-blue-400 font-bold">0 / 5</span>
+                        </div>
+                        <button onclick="generateNewQuiz()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1">
+                            <i class="fa-solid fa-arrows-rotate"></i> Reset Quiz
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Questions List Container -->
+                <div id="quizQuestionsContainer" class="space-y-6 mt-6">
+                    <!-- Populated dynamically by JS -->
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 5: FORMULA SHEET & REFERENCE -->
+        <!-- ========================================== -->
+        <section id="content-formula-sheet" class="tab-content space-y-6 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Formula Card 1: Discrete Random Variables & PMF -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                        <h3 class="text-md font-bold text-purple-400">1. Discrete PMF, Mean & Variance</h3>
+                        <span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded">Slides 8, 10</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-slate-300 font-mono-code bg-slate-900 p-3 rounded-xl border border-slate-700">
+                        <p><span class="text-slate-400">PMF Condition 1:</span> $0 \le P(X=x) \le 1$</p>
+                        <p><span class="text-slate-400">PMF Condition 2:</span> $\sum P(X=x) = 1.0$</p>
+                        <p><span class="text-slate-400">Expected Value:</span> $E(X) = \mu = \sum x P(X=x)$</p>
+                        <p><span class="text-slate-400">Variance:</span> $Var(X) = \sigma^2 = \sum x^2 P(X=x) - \mu^2$</p>
+                        <p><span class="text-slate-400">Std Dev:</span> $\sigma = \sqrt{Var(X)}$</p>
+                    </div>
+                </div>
+
+                <!-- Formula Card 2: Binomial Distribution -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                        <h3 class="text-md font-bold text-emerald-400">2. Binomial Distribution $B(n, p)$</h3>
+                        <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Slide 14</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-slate-300 font-mono-code bg-slate-900 p-3 rounded-xl border border-slate-700">
+                        <p><span class="text-slate-400">PMF Formula:</span> $P(X=x) = \binom{n}{x} p^x (1-p)^{n-x}$</p>
+                        <p><span class="text-slate-400">Combination:</span> $\binom{n}{x} = \frac{n!}{x!(n-x)!}$</p>
+                        <p><span class="text-slate-400">Mean:</span> $\mu = np$</p>
+                        <p><span class="text-slate-400">Variance:</span> $\sigma^2 = np(1-p)$</p>
+                        <p><span class="text-slate-400">Std Dev:</span> $\sigma = \sqrt{np(1-p)}$</p>
+                    </div>
+                </div>
+
+                <!-- Formula Card 3: Poisson Distribution -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                        <h3 class="text-md font-bold text-teal-400">3. Poisson Distribution $Pois(\lambda)$</h3>
+                        <span class="text-xs bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded">Slide 17</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-slate-300 font-mono-code bg-slate-900 p-3 rounded-xl border border-slate-700">
+                        <p><span class="text-slate-400">PMF Formula:</span> $P(X=x) = \frac{e^{-\lambda}\lambda^x}{x!}, \quad x = 0, 1, 2, ...$</p>
+                        <p><span class="text-slate-400">Mean:</span> $\mu = \lambda$</p>
+                        <p><span class="text-slate-400">Variance:</span> $\sigma^2 = \lambda$</p>
+                        <p><span class="text-slate-400">Rate Scaling:</span> $\lambda_{\text{new}} = \lambda_{\text{base}} \times \left(\frac{t_{\text{new}}}{t_{\text{base}}}\right)$</p>
+                    </div>
+                </div>
+
+                <!-- Formula Card 4: Continuous Normal PDF -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                        <h3 class="text-md font-bold text-pink-400">4. Normal Distribution $N(\mu, \sigma^2)$</h3>
+                        <span class="text-xs bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded">Slide 6</span>
+                    </div>
+                    <div class="space-y-2 text-xs text-slate-300 font-mono-code bg-slate-900 p-3 rounded-xl border border-slate-700">
+                        <p><span class="text-slate-400">Standardization Z-Score:</span> $Z = \frac{X - \mu}{\sigma}$</p>
+                        <p><span class="text-slate-400">Standard Normal:</span> $Z \sim N(0, 1)$</p>
+                        <p><span class="text-slate-400">Tail Prob:</span> $P(X > x) = 1 - P(X \le x) = 1 - \Phi(Z)$</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-800 border-t border-slate-700 py-4 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div>
+                STAT1114 / STAT2044 Statistics for Data Analytics • Lecture 3 Master Studio
+            </div>
+            <div>
+                Interactive Exam Preparation Companion
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JAVASCRIPT CORE & STATISTICAL ENGINE -->
+    <script>
+        // Trigger KaTeX render across target element safely
+        function triggerMathRender(targetElement = document.body) {
+            if (typeof renderMathInElement === 'function' && targetElement) {
+                renderMathInElement(targetElement, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        /* ==============================================================
+           1. MATHEMATICAL & STATISTICAL HELPERS
+           ============================================================== */
+        
+        function factorial(n) {
+            if (n < 0) return 0;
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) result *= i;
+            return result;
+        }
+
+        function nCr(n, r) {
+            if (r < 0 || r > n) return 0;
+            return factorial(n) / (factorial(r) * factorial(n - r));
+        }
+
+        function binomialPMF(n, p, x) {
+            if (x < 0 || x > n) return 0;
+            return nCr(n, x) * Math.pow(p, x) * Math.pow(1 - p, n - x);
+        }
+
+        function poissonPMF(lambda, x) {
+            if (x < 0) return 0;
+            return (Math.exp(-lambda) * Math.pow(lambda, x)) / factorial(x);
+        }
+
+        function standardNormalCDF(x) {
+            const t = 1 / (1 + 0.2316419 * Math.abs(x));
+            const d = 0.3989423 * Math.exp(-x * x / 2);
+            let prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+            if (x > 0) prob = 1 - prob;
+            return prob;
+        }
+
+        function standardNormalPDF(x, mean = 0, std = 1) {
+            const z = (x - mean) / std;
+            return (1 / (std * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z);
+        }
+
+        /* ==============================================================
+           2. STATE MANAGEMENT & TAB SWITCHING
+           ============================================================== */
+        
+        const state = {
+            checkedItems: new Set(),
+            currentLabSubtab: 'binomial',
+            currentCase: 1,
+            customPmfData: [
+                { x: 0, p: 0.35 },
+                { x: 1, p: 0.25 },
+                { x: 2, p: 0.20 },
+                { x: 3, p: 0.10 },
+                { x: 4, p: 0.05 },
+                { x: 5, p: 0.05 }
+            ]
+        };
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white', 'shadow', 'font-semibold');
+                btn.classList.add('text-slate-400');
+            });
+
+            const activeTab = document.getElementById(`content-${tabId}`);
+            activeTab.classList.remove('hidden');
+            
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.add('bg-purple-600', 'text-white', 'shadow', 'font-semibold');
+            activeBtn.classList.remove('text-slate-400');
+
+            if (tabId === 'sim-lab') {
+                initLabCharts();
+            } else if (tabId === 'case-studies') {
+                loadCaseStudy(state.currentCase);
+            } else if (tabId === 'exam-quiz' && quizQuestions.length === 0) {
+                generateNewQuiz();
+            }
+
+            setTimeout(() => triggerMathRender(activeTab), 50);
+        }
+
+        function switchLabSubtab(subtabId) {
+            state.currentLabSubtab = subtabId;
+            document.querySelectorAll('.lab-sub-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.lab-sub-btn').forEach(btn => {
+                btn.classList.remove('bg-emerald-600', 'bg-teal-600', 'bg-blue-600', 'bg-purple-600', 'text-white', 'shadow');
+                btn.classList.add('bg-slate-700', 'text-slate-300');
+            });
+
+            const activeSub = document.getElementById(`labSub-${subtabId}`);
+            activeSub.classList.remove('hidden');
+            
+            const btn = document.getElementById(`labSubBtn-${subtabId}`);
+            btn.classList.remove('bg-slate-700', 'text-slate-300');
+            
+            if (subtabId === 'binomial') btn.classList.add('bg-emerald-600', 'text-white', 'shadow');
+            else if (subtabId === 'poisson') btn.classList.add('bg-teal-600', 'text-white', 'shadow');
+            else if (subtabId === 'custom-pmf') btn.classList.add('bg-blue-600', 'text-white', 'shadow');
+            else if (subtabId === 'normal') btn.classList.add('bg-purple-600', 'text-white', 'shadow');
+
+            initLabCharts();
+            setTimeout(() => triggerMathRender(activeSub), 50);
+        }
+
+        function toggleCheck(id) {
+            const chk = document.getElementById(id);
+            if (chk.checked) {
+                state.checkedItems.add(id);
+            } else {
+                state.checkedItems.delete(id);
+            }
+            updateReadinessScore();
+        }
+
+        function updateReadinessScore() {
+            const total = 5;
+            const checked = state.checkedItems.size;
+            const score = Math.round((checked / total) * 100);
+            document.getElementById('readinessScore').textContent = score;
+            document.getElementById('progressBar').style.width = `${score}%`;
+        }
+
+        function resetProgress() {
+            state.checkedItems.clear();
+            for (let i = 1; i <= 5; i++) {
+                const el = document.getElementById(`chk${i}`);
+                if (el) el.checked = false;
+            }
+            updateReadinessScore();
+        }
+
+
+        /* ==============================================================
+           3. INTERACTIVE LAB ENGINE & CHART INSTANCES
+           ============================================================== */
+        
+        let chartBinomial = null;
+        let chartPoisson = null;
+        let chartCustomPmf = null;
+        let chartNormal = null;
+
+        function initLabCharts() {
+            if (state.currentLabSubtab === 'binomial') {
+                updateBinomialLab();
+            } else if (state.currentLabSubtab === 'poisson') {
+                updatePoissonLab();
+            } else if (state.currentLabSubtab === 'custom-pmf') {
+                renderCustomPmfTable();
+                updateCustomPmfLab();
+            } else if (state.currentLabSubtab === 'normal') {
+                updateNormalLab();
+            }
+        }
+
+        // --- BINOMIAL LAB ---
+        function updateBinomialLab() {
+            const n = parseInt(document.getElementById('binomN').value, 10);
+            const p = parseFloat(document.getElementById('binomP').value);
+            
+            // Adjust slider max for x
+            const xSlider = document.getElementById('binomX');
+            xSlider.max = n;
+            if (parseInt(xSlider.value, 10) > n) xSlider.value = n;
+            const targetX = parseInt(xSlider.value, 10);
+
+            document.getElementById('binomNVal').textContent = `n = ${n}`;
+            document.getElementById('binomPVal').textContent = `p = ${p.toFixed(2)}`;
+            document.getElementById('binomXVal').textContent = `x = ${targetX}`;
+
+            const mean = n * p;
+            const variance = n * p * (1 - p);
+            const std = Math.sqrt(variance);
+            const exactP = binomialPMF(n, p, targetX);
+
+            document.getElementById('binomMean').textContent = mean.toFixed(2);
+            document.getElementById('binomVar').textContent = variance.toFixed(2);
+            document.getElementById('binomStd').textContent = std.toFixed(3);
+            document.getElementById('binomExactProb').textContent = exactP.toFixed(4);
+
+            let cumulativeLessEq = 0;
+            let cumulativeGreaterEq = 0;
+            const labels = [];
+            const data = [];
+            const bgColors = [];
+
+            for (let k = 0; k <= n; k++) {
+                const prob = binomialPMF(n, p, k);
+                labels.push(k.toString());
+                data.push(prob);
+
+                if (k <= targetX) cumulativeLessEq += prob;
+                if (k >= targetX) cumulativeGreaterEq += prob;
+
+                if (k === targetX) bgColors.push('rgba(245, 158, 11, 0.9)'); // Gold for target
+                else bgColors.push('rgba(16, 185, 129, 0.6)');
+            }
+
+            const stepEl = document.getElementById('binomFormulaStep');
+            if (stepEl) {
+                stepEl.innerHTML = `$P(X=${targetX}) = \\binom{${n}}{${targetX}} (${p.toFixed(2)})^{${targetX}} (${(1-p).toFixed(2)})^{${n-targetX}} = \\mathbf{${exactP.toFixed(4)}}$`;
+                triggerMathRender(stepEl);
+            }
+
+            const cumEl = document.getElementById('binomCumulativeStep');
+            if (cumEl) {
+                cumEl.innerHTML = `$P(X \\le ${targetX}) = ${cumulativeLessEq.toFixed(4)} \\quad | \\quad P(X \\ge ${targetX}) = ${cumulativeGreaterEq.toFixed(4)}$`;
+                triggerMathRender(cumEl);
+            }
+
+            // Chart update
+            const ctx = document.getElementById('chartBinomial').getContext('2d');
+            if (chartBinomial) chartBinomial.destroy();
+
+            chartBinomial = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Probability P(X=x)',
+                        data: data,
+                        backgroundColor: bgColors,
+                        borderColor: '#10b981',
+                        borderWidth: 1,
+                        barPercentage: 0.8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8', fontSize: 10 } },
+                        y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8', fontSize: 10 }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function loadLaptopPreset() {
+            document.getElementById('binomN').value = 4;
+            document.getElementById('binomP').value = 0.75;
+            document.getElementById('binomX').value = 2;
+            updateBinomialLab();
+        }
+
+        // --- POISSON LAB ---
+        function updatePoissonLab() {
+            const lambda = parseFloat(document.getElementById('poissonLambda').value);
+            const targetX = parseInt(document.getElementById('poissonX').value, 10);
+
+            document.getElementById('poissonLambdaVal').textContent = `λ = ${lambda.toFixed(2)}`;
+            document.getElementById('poissonXVal').textContent = `x = ${targetX}`;
+
+            const std = Math.sqrt(lambda);
+            const exactP = poissonPMF(lambda, targetX);
+
+            document.getElementById('poissonMean').textContent = lambda.toFixed(2);
+            document.getElementById('poissonVar').textContent = lambda.toFixed(2);
+            document.getElementById('poissonStd').textContent = std.toFixed(3);
+            document.getElementById('poissonExactProb').textContent = exactP.toFixed(4);
+
+            const maxK = Math.max(12, Math.ceil(lambda + 4 * std));
+            const labels = [];
+            const data = [];
+            const bgColors = [];
+
+            let cumulativeLessEq = 0;
+
+            for (let k = 0; k <= maxK; k++) {
+                const prob = poissonPMF(lambda, k);
+                labels.push(k.toString());
+                data.push(prob);
+
+                if (k <= targetX) cumulativeLessEq += prob;
+
+                if (k === targetX) bgColors.push('rgba(245, 158, 11, 0.9)');
+                else bgColors.push('rgba(13, 148, 136, 0.6)');
+            }
+
+            const cumulativeGreaterEq = 1 - (cumulativeLessEq - exactP);
+
+            const stepEl = document.getElementById('poissonFormulaStep');
+            if (stepEl) {
+                stepEl.innerHTML = `$P(X=${targetX}) = \\frac{e^{-${lambda.toFixed(2)}} (${lambda.toFixed(2)})^{${targetX}}}{${targetX}!} = \\mathbf{${exactP.toFixed(4)}}$`;
+                triggerMathRender(stepEl);
+            }
+
+            const cumEl = document.getElementById('poissonCumulativeStep');
+            if (cumEl) {
+                cumEl.innerHTML = `$P(X \\le ${targetX}) = ${cumulativeLessEq.toFixed(4)} \\quad | \\quad P(X \\ge ${targetX}) = ${cumulativeGreaterEq.toFixed(4)}$`;
+                triggerMathRender(cumEl);
+            }
+
+            const ctx = document.getElementById('chartPoisson').getContext('2d');
+            if (chartPoisson) chartPoisson.destroy();
+
+            chartPoisson = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Probability P(X=x)',
+                        data: data,
+                        backgroundColor: bgColors,
+                        borderColor: '#0d9488',
+                        borderWidth: 1,
+                        barPercentage: 0.8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8', fontSize: 10 } },
+                        y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8', fontSize: 10 }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function loadATMPreset1() {
+            document.getElementById('poissonLambda').value = 2.0;
+            document.getElementById('poissonX').value = 0;
+            updatePoissonLab();
+        }
+
+        function loadATMPreset2() {
+            document.getElementById('poissonLambda').value = 1.25;
+            document.getElementById('poissonX').value = 0;
+            updatePoissonLab();
+        }
+
+        // --- CUSTOM PMF LAB ---
+        function renderCustomPmfTable() {
+            const tbody = document.getElementById('customPmfTableBody');
+            tbody.innerHTML = '';
+
+            state.customPmfData.forEach((row, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-800";
+                tr.innerHTML = `
+                    <td class="p-1 border border-slate-700">
+                        <input type="number" value="${row.x}" onchange="updatePmfCell(${idx}, 'x', this.value)" class="w-12 bg-slate-950 text-white text-center rounded py-0.5 border border-slate-700">
+                    </td>
+                    <td class="p-1 border border-slate-700">
+                        <input type="number" step="0.01" min="0" max="1" value="${row.p}" onchange="updatePmfCell(${idx}, 'p', this.value)" class="w-16 bg-slate-950 text-amber-400 text-center rounded py-0.5 border border-slate-700">
+                    </td>
+                    <td class="p-1 border border-slate-700 font-mono text-slate-300" id="xP_${idx}">
+                        ${(row.x * row.p).toFixed(2)}
+                    </td>
+                    <td class="p-1 border border-slate-700 font-mono text-slate-300" id="x2P_${idx}">
+                        ${(row.x * row.x * row.p).toFixed(2)}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            triggerMathRender(tbody);
+        }
+
+        function updatePmfCell(idx, key, val) {
+            state.customPmfData[idx][key] = parseFloat(val) || 0;
+            renderCustomPmfTable();
+            updateCustomPmfLab();
+        }
+
+        function loadPurchasesPreset() {
+            state.customPmfData = [
+                { x: 0, p: 0.35 },
+                { x: 1, p: 0.25 },
+                { x: 2, p: 0.20 },
+                { x: 3, p: 0.10 },
+                { x: 4, p: 0.05 },
+                { x: 5, p: 0.05 }
+            ];
+            renderCustomPmfTable();
+            updateCustomPmfLab();
+        }
+
+        function updateCustomPmfLab() {
+            const data = state.customPmfData;
+            let sumP = 0;
+            let ex = 0;
+            let ex2 = 0;
+
+            data.forEach(item => {
+                sumP += item.p;
+                ex += item.x * item.p;
+                ex2 += (item.x * item.x) * item.p;
+            });
+
+            const variance = ex2 - (ex * ex);
+            const std = Math.sqrt(Math.max(0, variance));
+
+            const sumCheckEl = document.getElementById('pmfSumCheck');
+            if (Math.abs(sumP - 1.0) < 0.001) {
+                sumCheckEl.className = "text-xs font-semibold text-emerald-400 text-center";
+                sumCheckEl.innerHTML = `Total Probability $\\sum P(x) = ${sumP.toFixed(2)}$ ✓`;
+            } else {
+                sumCheckEl.className = "text-xs font-semibold text-rose-400 text-center";
+                sumCheckEl.innerHTML = `Warning: $\\sum P(x) = ${sumP.toFixed(2)}$ (Must sum to 1.00)`;
+            }
+            triggerMathRender(sumCheckEl);
+
+            document.getElementById('pmfMeanVal').textContent = ex.toFixed(2);
+            document.getElementById('pmfVarVal').textContent = variance.toFixed(2);
+            document.getElementById('pmfStdVal').textContent = std.toFixed(4);
+
+            const step1 = document.getElementById('pmfStep1');
+            const step2 = document.getElementById('pmfStep2');
+
+            if (step1) {
+                step1.innerHTML = `$E(X) = \\sum x P(x) = \\mathbf{${ex.toFixed(2)}}$`;
+                triggerMathRender(step1);
+            }
+            if (step2) {
+                step2.innerHTML = `$Var(X) = \\sum x^2 P(x) - \\mu^2 = ${ex2.toFixed(2)} - (${ex.toFixed(2)})^2 = \\mathbf{${variance.toFixed(2)}}$`;
+                triggerMathRender(step2);
+            }
+
+            const ctx = document.getElementById('chartCustomPmf').getContext('2d');
+            if (chartCustomPmf) chartCustomPmf.destroy();
+
+            chartCustomPmf = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.x.toString()),
+                    datasets: [{
+                        label: 'Probability Mass Function P(X=x)',
+                        data: data.map(d => d.p),
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' }, beginAtZero: true, max: 0.5 }
+                    }
+                }
+            });
+        }
+
+        // --- NORMAL PDF LAB ---
+        function updateNormalLab() {
+            const mu = parseFloat(document.getElementById('normMu').value);
+            const sigma = parseFloat(document.getElementById('normSigma').value);
+            const xVal = parseFloat(document.getElementById('normX').value);
+
+            document.getElementById('normMuVal').textContent = `μ = ${mu.toFixed(1)}`;
+            document.getElementById('normSigmaVal').textContent = `σ = ${sigma.toFixed(1)}`;
+            document.getElementById('normXVal').textContent = `x = ${xVal.toFixed(2)}`;
+
+            const z = (xVal - mu) / sigma;
+            const leftTail = standardNormalCDF(z);
+            const rightTail = 1 - leftTail;
+
+            document.getElementById('normZVal').textContent = z.toFixed(2);
+            document.getElementById('normLeftTail').textContent = leftTail.toFixed(4);
+            document.getElementById('normRightTail').textContent = rightTail.toFixed(4);
+
+            const labels = [];
+            const pdfData = [];
+            const leftFillData = [];
+
+            const startX = mu - 3.5 * sigma;
+            const endX = mu + 3.5 * sigma;
+            const step = (endX - startX) / 80;
+
+            for (let currX = startX; currX <= endX; currX += step) {
+                labels.push(currX.toFixed(1));
+                const density = standardNormalPDF(currX, mu, sigma);
+                pdfData.push(density);
+
+                if (currX <= xVal) {
+                    leftFillData.push(density);
+                } else {
+                    leftFillData.push(null);
+                }
+            }
+
+            const ctx = document.getElementById('chartNormal').getContext('2d');
+            if (chartNormal) chartNormal.destroy();
+
+            chartNormal = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Shaded P(X <= x)',
+                            data: leftFillData,
+                            backgroundColor: 'rgba(59, 130, 246, 0.4)',
+                            fill: true,
+                            pointRadius: 0,
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Normal PDF Curve',
+                            data: pdfData,
+                            borderColor: '#a855f7',
+                            borderWidth: 2,
+                            fill: false,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8', fontSize: 10 } },
+                        y: { display: false }
+                    }
+                }
+            });
+        }
+
+
+        /* ==============================================================
+           4. CASE STUDIES EXPLORER MODULE
+           ============================================================== */
+        
+        function loadCaseStudy(caseNum) {
+            state.currentCase = caseNum;
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById(`csBtn${i}`);
+                if (btn) {
+                    if (i === caseNum) {
+                        btn.className = "cs-tab-btn active text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-500 text-slate-900 shadow";
+                    } else {
+                        btn.className = "cs-tab-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 hover:text-white";
+                    }
+                }
+            }
+
+            const container = document.getElementById('caseStudyContainer');
+
+            if (caseNum === 1) {
+                // Case 1: Online Store Monthly Purchases (Slide 8-11)
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                            <div>
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Example 1 (Slides 8-11)</span>
+                                <h3 class="text-lg font-bold text-white">Online Retail Customer Purchases PMF & Expected Value</h3>
+                            </div>
+                            <span class="text-xs bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full border border-purple-500/30">Discrete PMF</span>
+                        </div>
+
+                        <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-xs text-slate-300 leading-relaxed">
+                            <strong>Slide Problem Statement:</strong> The distribution of monthly purchases made by customers at an online retailer is given in the table below. Let $X$ denote the number of purchases in a month.
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Data Table -->
+                            <div class="space-y-3 bg-slate-900 p-4 rounded-xl border border-slate-700">
+                                <h4 class="text-xs font-bold text-slate-200 uppercase">Monthly Purchases Distribution Table</h4>
+                                <table class="w-full text-xs text-left text-slate-300 border border-slate-800">
+                                    <thead class="bg-slate-950 text-slate-400">
+                                        <tr>
+                                            <th class="p-2 border border-slate-800">Purchases ($x$)</th>
+                                            <th class="p-2 border border-slate-800">Probability $P(X=x)$</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-800"> <td class="p-2 font-mono">0</td> <td class="p-2 font-mono">0.35</td> </tr>
+                                        <tr class="border-b border-slate-800"> <td class="p-2 font-mono">1</td> <td class="p-2 font-mono">0.25</td> </tr>
+                                        <tr class="border-b border-slate-800"> <td class="p-2 font-mono">2</td> <td class="p-2 font-mono">0.20</td> </tr>
+                                        <tr class="border-b border-slate-800"> <td class="p-2 font-mono">3</td> <td class="p-2 font-mono">0.10</td> </tr>
+                                        <tr class="border-b border-slate-800"> <td class="p-2 font-mono">4</td> <td class="p-2 font-mono">0.05</td> </tr>
+                                        <tr> <td class="p-2 font-mono">5</td> <td class="p-2 font-mono">0.05</td> </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Questions & Calculated Solutions -->
+                            <div class="space-y-3 font-mono-code text-xs">
+                                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-2">
+                                    <div class="text-amber-400 font-sans font-bold">Q1: Probability of no purchases?</div>
+                                    <p>$P(X = 0) = \\mathbf{0.35}$</p>
+                                </div>
+
+                                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-2">
+                                    <div class="text-amber-400 font-sans font-bold">Q2: Probability of more than 3 purchases?</div>
+                                    <p>$P(X > 3) = P(X = 4) + P(X = 5) = 0.05 + 0.05 = \\mathbf{0.10}$</p>
+                                </div>
+
+                                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-2">
+                                    <div class="text-emerald-400 font-sans font-bold">Q3: Expected Value & Variance</div>
+                                    <p>$E(X) = 0(0.35) + 1(0.25) + 2(0.20) + 3(0.10) + 4(0.05) + 5(0.05) = \\mathbf{1.40}$</p>
+                                    <p>$Var(X) = \\sum x^2 P(x) - \\mu^2 = 4.00 - (1.40)^2 = \\mathbf{2.04}$</p>
+                                    <p>$\\sigma = \\sqrt{2.04} = \\mathbf{1.4283}$</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (caseNum === 2) {
+                // Case 2: Laptop Shock Test (Slide 15)
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                            <div>
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Example 2 (Slide 15)</span>
+                                <h3 class="text-lg font-bold text-white">Laptop Survival Under Shock Test</h3>
+                            </div>
+                            <span class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/30">Binomial Distribution</span>
+                        </div>
+
+                        <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-xs text-slate-300 leading-relaxed">
+                            <strong>Slide Problem Statement:</strong> The probability that a certain laptop model survives a shock test is $p = 0.75$. Four laptops ($n = 4$) undergo the shock test next. Assuming tests are independent Bernoulli trials, find the probability that <strong>exactly 2</strong> of the 4 laptops survive.
+                        </div>
+
+                        <div class="bg-slate-900 p-5 rounded-xl border border-slate-700 font-mono-code text-xs space-y-3">
+                            <div class="font-sans font-bold text-emerald-400 text-sm">Step-by-Step Binomial Solution:</div>
+                            <p>1. Identify parameters: $n = 4$, $p = 0.75$, success = survive test.</p>
+                            <p>2. Apply Binomial PMF: $P(X = x) = \\binom{n}{x} p^x (1-p)^{n-x}$</p>
+                            <p>3. Calculate for $x = 2$:</p>
+                            <p class="pl-4 text-amber-300">$P(X = 2) = \\binom{4}{2} (0.75)^2 (0.25)^2$</p>
+                            <p class="pl-4 text-amber-300">$P(X = 2) = 6 \\cdot (0.5625) \\cdot (0.0625) = \\mathbf{0.2109}$</p>
+                        </div>
+                    </div>
+                `;
+            } else if (caseNum === 3) {
+                // Case 3: ATM Customer Arrivals per Hour (Slide 18)
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                            <div>
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Example 3 (Slide 18)</span>
+                                <h3 class="text-lg font-bold text-white">ATM Hourly Customer Arrivals</h3>
+                            </div>
+                            <span class="text-xs bg-teal-500/20 text-teal-300 px-3 py-1 rounded-full border border-teal-500/30">Poisson Distribution</span>
+                        </div>
+
+                        <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-xs text-slate-300 leading-relaxed">
+                            <strong>Slide Problem Statement:</strong> Customers arrive at an ATM randomly over time at an average rate of 2 per hour ($\lambda = 2$). Find the probability that during an hour: (a) No customers arrive, and (b) Two or more customers arrive.
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-slate-900 p-5 rounded-xl border border-slate-700 space-y-2 font-mono-code text-xs">
+                                <div class="font-sans font-bold text-teal-400 text-sm">Part (a): $P(X = 0)$ No arrivals</div>
+                                <p>$P(X = 0) = \\frac{e^{-2} 2^0}{0!} = e^{-2} = \\mathbf{0.1353}$</p>
+                            </div>
+
+                            <div class="bg-slate-900 p-5 rounded-xl border border-slate-700 space-y-2 font-mono-code text-xs">
+                                <div class="font-sans font-bold text-teal-400 text-sm">Part (b): $P(X \\ge 2)$ Two or more</div>
+                                <p>$P(X \\ge 2) = 1 - P(X \\le 1)$</p>
+                                <p>$P(X \\le 1) = P(X=0) + P(X=1) = 0.1353 + \\frac{e^{-2}2^1}{1!} = 0.1353 + 0.2707 = 0.4060$</p>
+                                <p class="text-amber-300 font-bold">$P(X \\ge 2) = 1 - 0.4060 = \\mathbf{0.5940}$</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (caseNum === 4) {
+                // Case 4: ATM 5-Minute Time-Window Scaling (Slide 19)
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                            <div>
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Example 4 (Slide 19)</span>
+                                <h3 class="text-lg font-bold text-white">ATM 5-Minute Time Interval Scaling</h3>
+                            </div>
+                            <span class="text-xs bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30">Poisson Rate Adjustment</span>
+                        </div>
+
+                        <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-700 text-xs text-slate-300 leading-relaxed">
+                            <strong>Slide Problem Statement:</strong> Customers arrive at an ATM at an average rate of 15 per hour. Find the probability that during a <strong>5-minute interval</strong>, no customers will arrive.
+                        </div>
+
+                        <div class="bg-slate-900 p-5 rounded-xl border border-slate-700 font-mono-code text-xs space-y-3">
+                            <div class="font-sans font-bold text-indigo-400 text-sm">Step-by-Step Scaling & Calculation:</div>
+                            <p>1. Scale rate $\\lambda$ from 60 minutes to 5 minutes:</p>
+                            <p class="pl-4 text-slate-200">$\\lambda = \\frac{15 \\text{ customers}}{60 \\text{ minutes}} \\times 5 \\text{ minutes} = \\mathbf{1.25}$</p>
+                            <p>2. Apply Poisson PMF for $x = 0$ with $\\lambda = 1.25$:</p>
+                            <p class="pl-4 text-emerald-400 font-bold">$P(X = 0) = \\frac{e^{-1.25} (1.25)^0}{0!} = e^{-1.25} = \\mathbf{0.2865}$</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            triggerMathRender(container);
+        }
+
+
+        /* ==============================================================
+           5. INTERACTIVE EXAM PRACTICE QUIZ ENGINE
+           ============================================================== */
+        
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "Which of the following is a requirement for a set of values $P(X=x)$ to represent a valid discrete probability mass function (PMF)?",
+                options: [
+                    "All probabilities $P(X=x)$ must be strictly greater than $1.0$",
+                    "The sum of probabilities $\\sum P(X=x) = 1.0$ and $0 \\le P(X=x) \\le 1$ for all $x$",
+                    "Expected value $E(X)$ must equal $0$",
+                    "Variance $Var(X)$ must equal the standard deviation $\\sigma$"
+                ],
+                correct: 1,
+                explanation: "Slide 8: A valid PMF requires all probabilities to lie in $[0, 1]$ and sum up to $1.0$."
+            },
+            {
+                id: 2,
+                question: "If a discrete random variable $X$ has values $x = 0, 1, 2$ with probabilities $P(0)=0.2, P(1)=0.5, P(2)=0.3$, what is its Expected Value $E(X)$?",
+                options: [
+                    "$1.0$",
+                    "$1.1$",
+                    "$1.2$",
+                    "$1.5$"
+                ],
+                correct: 1,
+                explanation: "Slide 10: $E(X) = \\sum x P(x) = 0(0.2) + 1(0.5) + 2(0.3) = 0 + 0.5 + 0.6 = 1.1$."
+            },
+            {
+                id: 3,
+                question: "In a Binomial distribution $B(n=10, p=0.4)$, what is the mean $\\mu$ and variance $\\sigma^2$?",
+                options: [
+                    "$\\mu = 4.0, \\sigma^2 = 2.4$",
+                    "$\\mu = 4.0, \\sigma^2 = 4.0$",
+                    "$\\mu = 2.4, \\sigma^2 = 1.2$",
+                    "$\\mu = 10, \\sigma^2 = 4.0$"
+                ],
+                correct: 0,
+                explanation: "Slide 14: Mean $\\mu = np = 10(0.4) = 4.0$. Variance $\\sigma^2 = np(1-p) = 10(0.4)(0.6) = 2.4$."
+            },
+            {
+                id: 4,
+                question: "Calls arrive at a call center at an average rate of 12 per hour. What is the scaled Poisson parameter $\\lambda$ for a 10-minute period?",
+                options: [
+                    "$\\lambda = 12$",
+                    "$\\lambda = 6$",
+                    "$\\lambda = 2$",
+                    "$\\lambda = 1.2$"
+                ],
+                correct: 2,
+                explanation: "Slide 19: $\\lambda = \\left(\\frac{12 \\text{ calls}}{60 \\text{ min}}\\right) \\times 10 \\text{ min} = 2.0$."
+            },
+            {
+                id: 5,
+                question: "Which distribution family has a single parameter $\\lambda$ that is equal to BOTH its mean and its variance?",
+                options: [
+                    "Binomial Distribution",
+                    "Poisson Distribution",
+                    "Normal Distribution",
+                    "Uniform Distribution"
+                ],
+                correct: 1,
+                explanation: "Slide 17: For a Poisson distribution, Mean $E(X) = \\lambda$ and Variance $Var(X) = \\lambda$."
+            }
+        ];
+
+        let userAnswers = {};
+
+        function generateNewQuiz() {
+            userAnswers = {};
+            document.getElementById('quizScoreDisplay').textContent = "0 / 5";
+            const container = document.getElementById('quizQuestionsContainer');
+            container.innerHTML = "";
+
+            quizQuestions.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-900 border border-slate-700 rounded-xl p-5 space-y-3";
+                card.innerHTML = `
+                    <div class="font-bold text-white text-sm flex items-start gap-2">
+                        <span class="bg-blue-500/20 text-blue-300 text-xs px-2 py-0.5 rounded border border-blue-500/30">Q${idx + 1}</span>
+                        <span>${q.question}</span>
+                    </div>
+
+                    <div class="space-y-2 mt-2">
+                        ${q.options.map((opt, optIdx) => `
+                            <label class="flex items-center gap-3 p-3 bg-slate-800 hover:bg-slate-700/60 rounded-lg cursor-pointer border border-slate-700 text-xs text-slate-200 transition">
+                                <input type="radio" name="q_${q.id}" value="${optIdx}" onchange="selectAnswer(${q.id}, ${optIdx})" class="text-blue-600 focus:ring-blue-500">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+
+                    <div id="quizExplain_${q.id}" class="hidden p-3 bg-slate-950 rounded-lg border border-slate-800 text-xs leading-relaxed">
+                        <!-- Populated upon answer -->
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            triggerMathRender(container);
+        }
+
+        function selectAnswer(qId, selectedIdx) {
+            userAnswers[qId] = selectedIdx;
+            const q = quizQuestions.find(item => item.id === qId);
+            const explainDiv = document.getElementById(`quizExplain_${qId}`);
+
+            explainDiv.classList.remove('hidden');
+            if (selectedIdx === q.correct) {
+                explainDiv.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check"></i> Correct!</span> <span class="text-slate-300">${q.explanation}</span>`;
+            } else {
+                explainDiv.innerHTML = `<span class="text-rose-400 font-bold"><i class="fa-solid fa-circle-xmark"></i> Incorrect.</span> <span class="text-slate-300">${q.explanation}</span>`;
+            }
+            triggerMathRender(explainDiv);
+
+            let correctCount = 0;
+            quizQuestions.forEach(item => {
+                if (userAnswers[item.id] === item.correct) correctCount++;
+            });
+            document.getElementById('quizScoreDisplay').textContent = `${correctCount} / ${quizQuestions.length}`;
+        }
+
+        /* ==============================================================
+           6. APP INITIALIZATION
+           ============================================================== */
+        window.addEventListener('DOMContentLoaded', () => {
+            switchTab('checklist');
+            setTimeout(() => triggerMathRender(), 100);
+        });
+    </script>
+</body>
+</html>
