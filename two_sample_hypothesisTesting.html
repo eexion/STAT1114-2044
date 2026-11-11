@@ -542,7 +542,7 @@
                         <!-- Mathematical Derivation Box -->
                         <div class="bg-slate-900 text-slate-100 rounded-xl p-5 space-y-3 font-mono text-xs overflow-x-auto shadow-inner">
                             <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-amber-400 font-sans font-bold">
-                                <span><i class="fa-solid fa-square-root-variable mr-1.5"></i> Step-by-Step</span>
+                                <span><i class="fa-solid fa-square-root-variable mr-1.5"></i> Step-by-Step KaTeX Derivation</span>
                             </div>
                             <div id="out-derivation" class="leading-relaxed space-y-2">
                                 <!-- Derivation steps appended here -->
@@ -1550,61 +1550,75 @@ RUN;</pre>
             const ctx = document.getElementById('distributionChart');
             if (!ctx) return;
 
-            // Generate normal curve data points (-4 to +4)
-            const labels = [];
-            const dataPoints = [];
-            const bgColors = [];
-
             const isTwoTailed = tailVal === 'two-tailed';
             const isRightTailed = tailVal === 'right-tailed';
-            const isLeftTailed = tailVal === 'left-tailed';
             const absCrit = Math.abs(critVal);
 
-            for (let x = -4; x <= 4; x += 0.08) {
-                labels.push(x.toFixed(2));
-                const y = Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
-                dataPoints.push(y);
+            const REJECT_COLOR = 'rgba(244, 63, 94, 0.45)';
+            const ACCEPT_COLOR = 'rgba(59, 130, 246, 0.15)';
 
-                // Determine if x falls in rejection region
-                let inRejection = false;
+            function pdf(x) {
+                return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+            }
+
+            // Build labels and per-region data arrays
+            // null values + spanGaps:false causes Chart.js to break fill at that point,
+            // so each region dataset only fills its own segment.
+            const labels = [];
+            const leftRejectData = [];   // left tail rejection region
+            const centerData = [];       // fail-to-reject region
+            const rightRejectData = [];  // right tail rejection region (two-tailed only)
+            const curveData = [];        // full curve line drawn on top
+
+            for (let x = -4; x <= 4.001; x += 0.08) {
+                const xr = parseFloat(x.toFixed(2));
+                const y = pdf(xr);
+                labels.push(xr.toFixed(2));
+                curveData.push(y);
+
                 if (isTwoTailed) {
-                    if (x <= -absCrit || x >= absCrit) inRejection = true;
+                    leftRejectData.push(xr <= -absCrit ? y : null);
+                    centerData.push(xr >= -absCrit && xr <= absCrit ? y : null);
+                    rightRejectData.push(xr >= absCrit ? y : null);
                 } else if (isRightTailed) {
-                    if (x >= critVal) inRejection = true;
-                } else if (isLeftTailed) {
-                    if (x <= critVal) inRejection = true;
+                    leftRejectData.push(null);
+                    centerData.push(xr <= critVal ? y : null);
+                    rightRejectData.push(xr >= critVal ? y : null);
+                } else {
+                    // left-tailed
+                    leftRejectData.push(xr <= critVal ? y : null);
+                    centerData.push(xr >= critVal ? y : null);
+                    rightRejectData.push(null);
                 }
-
-                bgColors.push(inRejection ? 'rgba(244, 63, 94, 0.4)' : 'rgba(59, 130, 246, 0.2)');
             }
 
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
+            const regionBase = { borderColor: 'transparent', borderWidth: 0, pointRadius: 0, fill: true, spanGaps: false, tension: 0.4 };
+
+            const datasets = [
+                // Rejection regions (red) — drawn first so curve line sits on top
+                { ...regionBase, label: 'Rejection Region', data: leftRejectData,  backgroundColor: REJECT_COLOR },
+                { ...regionBase, label: 'Rejection Region', data: rightRejectData, backgroundColor: REJECT_COLOR },
+                // Fail-to-reject region (blue)
+                { ...regionBase, label: 'Fail to Reject',  data: centerData,       backgroundColor: ACCEPT_COLOR },
+                // Curve line on top — no fill
+                { label: 'Normal Distribution', data: curveData, borderColor: '#3b82f6', borderWidth: 2, fill: false, pointRadius: 0, tension: 0.4 }
+            ];
+
+            if (chartInstance) chartInstance.destroy();
 
             chartInstance = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Sampling Distribution',
-                        data: dataPoints,
-                        borderColor: '#3b82f6',
-                        borderWidth: 2,
-                        fill: true,
-                        backgroundColor: bgColors,
-                        pointRadius: 0
-                    }]
-                },
+                data: { labels, datasets },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { display: false },
                         tooltip: {
+                            filter: (item) => item.datasetIndex === 3, // only show tooltip on curve
                             callbacks: {
                                 title: (items) => `Z / t = ${items[0].label}`,
-                                label: (item) => `Density: ${item.raw.toFixed(4)}`
+                                label: (item) => `Density: ${parseFloat(item.raw || 0).toFixed(4)}`
                             }
                         }
                     },
