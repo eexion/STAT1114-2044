@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAT1114/2044 - Two-Sample Hypothesis Testing Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        code, pre { font-family: 'Fira Code', monospace; }
+        .katex-display { margin: 0.5em 0; overflow-x: auto; overflow-y: hidden; }
+        .tab-btn.active {
+            border-bottom-color: #3b82f6;
+            color: #1d4ed8;
+            font-weight: 600;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-blue-100 selection:text-blue-800">
+
+    <!-- Header / Navbar -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-xl shadow-lg shadow-blue-500/30">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold leading-tight tracking-tight text-slate-100">STAT1114 / STAT2044</h1>
+                        <p class="text-xs text-blue-400 font-medium">Topic 6: Two-Sample Hypothesis Testing Hub</p>
+                    </div>
+                </div>
+                
+                <!-- Quick Navigation -->
+                <div class="hidden md:flex items-center space-x-1 text-sm">
+                    <button onclick="switchTab('concepts')" id="nav-concepts" class="tab-nav-item px-3 py-2 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition">
+                        <i class="fa-solid fa-book-open mr-1.5 text-blue-400"></i>Concepts
+                    </button>
+                    <button onclick="switchTab('decision-tree')" id="nav-decision-tree" class="tab-nav-item px-3 py-2 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition">
+                        <i class="fa-solid fa-sitemap mr-1.5 text-emerald-400"></i>Decision Tree
+                    </button>
+                    <button onclick="switchTab('calculator')" id="nav-calculator" class="tab-nav-item px-3 py-2 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition">
+                        <i class="fa-solid fa-calculator mr-1.5 text-purple-400"></i>Calculators
+                    </button>
+                    <button onclick="switchTab('sas-code')" id="nav-sas-code" class="tab-nav-item px-3 py-2 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition">
+                        <i class="fa-solid fa-code mr-1.5 text-amber-400"></i>SAS & Code
+                    </button>
+                    <button onclick="switchTab('quizzes')" id="nav-quizzes" class="tab-nav-item px-3 py-2 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition">
+                        <i class="fa-solid fa-graduation-cap mr-1.5 text-pink-400"></i>Bloom's Quiz
+                    </button>
+                    <button onclick="switchTab('exam-drill')" id="nav-exam-drill" class="tab-nav-item px-3 py-2 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition">
+                        <i class="fa-solid fa-stopwatch mr-1.5 text-rose-400"></i>Exam Drill
+                    </button>
+                </div>
+
+                <!-- Score / Progress Badge -->
+                <div class="flex items-center space-x-3">
+                    <div class="bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 text-xs flex items-center space-x-2">
+                        <i class="fa-solid fa-trophy text-amber-400"></i>
+                        <span>Quiz Progress: <strong id="global-quiz-score" class="text-emerald-400 font-semibold">0/10</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Scrollable Bar -->
+        <div class="md:hidden flex overflow-x-auto border-t border-slate-800 px-2 py-2 space-x-2 text-xs custom-scrollbar">
+            <button onclick="switchTab('concepts')" class="px-3 py-1.5 rounded bg-slate-800 whitespace-nowrap text-slate-200">Concepts</button>
+            <button onclick="switchTab('decision-tree')" class="px-3 py-1.5 rounded bg-slate-800 whitespace-nowrap text-slate-200">Decision Tree</button>
+            <button onclick="switchTab('calculator')" class="px-3 py-1.5 rounded bg-slate-800 whitespace-nowrap text-slate-200">Calculator</button>
+            <button onclick="switchTab('sas-code')" class="px-3 py-1.5 rounded bg-slate-800 whitespace-nowrap text-slate-200">SAS & Code</button>
+            <button onclick="switchTab('quizzes')" class="px-3 py-1.5 rounded bg-slate-800 whitespace-nowrap text-slate-200">Bloom's Quiz</button>
+            <button onclick="switchTab('exam-drill')" class="px-3 py-1.5 rounded bg-slate-800 whitespace-nowrap text-slate-200">Exam Drill</button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: CONCEPTS & FORMULA MATRIX -->
+        <!-- ========================================== -->
+        <section id="tab-concepts" class="tab-content space-y-8">
+            <!-- Hero banner -->
+            <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="inline-block bg-blue-500/20 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full border border-blue-400/30 mb-3">Undergraduate Study Guide</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Mastering Two-Sample Hypothesis Testing</h2>
+                    <p class="mt-2 text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Learn to evaluate differences between two populations across 5 major study designs: Independent $Z$, Pooled $t$, Satterthwaite/Welch $t$, Paired $t$, and Two-Proportion $Z$-tests.
+                    </p>
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <button onclick="switchTab('decision-tree')" class="bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs sm:text-sm px-4 py-2.5 rounded-lg shadow transition flex items-center">
+                            <i class="fa-solid fa-sitemap mr-2"></i> Launch Decision Tree Wizard
+                        </button>
+                        <button onclick="switchTab('calculator')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs sm:text-sm px-4 py-2.5 rounded-lg border border-slate-700 transition flex items-center">
+                            <i class="fa-solid fa-calculator mr-2"></i> Open Interactive Calculator
+                        </button>
+                    </div>
+                </div>
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-white text-9xl pointer-events-none">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+            </div>
+
+            <!-- Concept 1: Design Types -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                    <i class="fa-solid fa-[#3b82f6] fa-diagram-project text-blue-600 mr-2.5"></i>
+                    Study Design Foundation: Independent vs. Dependent Samples
+                </h3>
+                <p class="text-sm text-slate-600 mt-1">Choosing the wrong design leads to invalid degrees of freedom and incorrect variance estimation.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <!-- Independent -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 hover:border-blue-300 transition">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider text-blue-700 bg-blue-100 px-2.5 py-1 rounded">Independent Samples</span>
+                            <i class="fa-solid fa-people-arrows text-blue-500 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-slate-800 text-sm">Two Unrelated Groups</h4>
+                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                            Observations drawn from Population 1 carry zero information about Population 2. No natural pairing or matching exists.
+                        </p>
+                        <div class="mt-4 bg-white p-3 rounded-lg border border-slate-200 text-xs text-slate-700 space-y-1">
+                            <div class="font-medium text-slate-900">Real-World Examples:</div>
+                            <ul class="list-disc list-inside space-y-1 text-slate-600">
+                                <li>Comparing IT salaries in Private vs. Public sectors ($n_1=35, n_2=30$)</li>
+                                <li>Testing A/B model conversion rates (Social Media Ads vs. Email Marketing)</li>
+                                <li>Comparing SAT scores of Male vs. Female students</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Dependent / Paired -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 hover:border-indigo-300 transition">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded">Dependent / Paired Samples</span>
+                            <i class="fa-solid fa-link text-indigo-500 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-slate-800 text-sm">Matched Pairs or Repeated Measures</h4>
+                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                            Each observation in Sample 1 is uniquely paired with an observation in Sample 2 (e.g., pre-test/post-test on the same subjects).
+                        </p>
+                        <div class="mt-4 bg-white p-3 rounded-lg border border-slate-200 text-xs text-slate-700 space-y-1">
+                        <div class="font-medium text-slate-900">Real-World Examples:</div>
+                        <ul class="list-disc list-inside space-y-1 text-slate-600">
+                            <li>10 students tested <strong>Before</strong> vs. <strong>After</strong> a 12-week Peer Tutoring programme</li>
+                            <li>Calorie intake before and after dietary counselling</li>
+                            <li>Paired algorithm benchmarking on identical test instances</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Master Formula Matrix -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-200">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                        <i class="fa-solid fa-square-root-variable text-purple-600 mr-2.5"></i>
+                        Comprehensive Formula & Test Matrix
+                    </h3>
+                    <p class="text-sm text-slate-600">Quick reference for all two-sample hypothesis test scenarios in STAT1114 / STAT2044.</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto mt-6 custom-scrollbar">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 uppercase tracking-wider font-semibold border-b border-slate-200">
+                            <th class="p-3">Scenario & Test</th>
+                            <th class="p-3">Key Assumptions</th>
+                            <th class="p-3">Test Statistic Formula</th>
+                            <th class="p-3">Degrees of Freedom ($\text{df}$)</th>
+                            <th class="p-3">Confidence Interval Formula</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 text-slate-700">
+                        <!-- Case A: Two-means Z -->
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 font-semibold text-blue-700">
+                                Two-Means $Z$-Test
+                                <span class="block text-[11px] font-normal text-slate-500">$\sigma_1, \sigma_2$ Known</span>
+                            </td>
+                            <td class="p-3">Independent samples, normal distributions or $n_1, n_2 \ge 30$, known $\sigma_1, \sigma_2$.</td>
+                            <td class="p-3 font-mono">$$z_0 = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}}}$$</td>
+                            <td class="p-3 font-medium">Standard Normal $Z$<br><span class="text-slate-500">(No $\text{df}$ needed)</span></td>
+                            <td class="p-3">$$(\bar{x}_1 - \bar{x}_2) \pm z_{\alpha/2} \sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}}$$</td>
+                        </tr>
+
+                        <!-- Case B: Pooled t -->
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 font-semibold text-emerald-700">
+                                Pooled $t$-Test
+                                <span class="block text-[11px] font-normal text-slate-500">$\sigma_1 = \sigma_2$ Unknown</span>
+                            </td>
+                            <td class="p-3">Independent samples, normal populations, equal variances assumed ($p_{\text{Folded F}} > \alpha$).</td>
+                            <td class="p-3 font-mono">
+                                $$t_0 = \frac{\bar{x}_1 - \bar{x}_2}{s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}}$$
+                                <span class="block text-[10px] text-slate-500">$$s_p = \sqrt{\frac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1 + n_2 - 2}}$$</span>
+                            </td>
+                            <td class="p-3 font-bold text-slate-800">$$\text{df} = n_1 + n_2 - 2$$</td>
+                            <td class="p-3">$$(\bar{x}_1 - \bar{x}_2) \pm t_{\alpha/2, \text{df}} \cdot s_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}$$</td>
+                        </tr>
+
+                        <!-- Case C: Satterthwaite t -->
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 font-semibold text-amber-700">
+                                Satterthwaite (Welch) $t$-Test
+                                <span class="block text-[11px] font-normal text-slate-500">$\sigma_1 \neq \sigma_2$ Unknown</span>
+                            </td>
+                            <td class="p-3">Independent samples, normal populations, unequal variances ($p_{\text{Folded F}} \le \alpha$).</td>
+                            <td class="p-3 font-mono">$$t_0 = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$</td>
+                            <td class="p-3 text-rose-700 font-semibold">
+                                $$\text{df} = \frac{\left(\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}\right)^2}{\frac{(s_1^2/n_1)^2}{n_1-1} + \frac{(s_2^2/n_2)^2}{n_2-1}}$$
+                                <span class="block text-[10px] text-rose-600 font-normal">*(Always round DOWN)*</span>
+                            </td>
+                            <td class="p-3">$$(\bar{x}_1 - \bar{x}_2) \pm t_{\alpha/2, \text{df}} \sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}$$</td>
+                        </tr>
+
+                        <!-- Case D: Paired t -->
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 font-semibold text-purple-700">
+                                Paired $t$-Test
+                                <span class="block text-[11px] font-normal text-slate-500">Dependent Samples</span>
+                            </td>
+                            <td class="p-3">Paired observations ($d_i = x_{1i} - x_{2i}$), differences are normally distributed.</td>
+                            <td class="p-3 font-mono">$$t_0 = \frac{\bar{d} - 0}{s_d / \sqrt{n}}$$</td>
+                            <td class="p-3 font-bold text-slate-800">$$\text{df} = n_{\text{pairs}} - 1$$</td>
+                            <td class="p-3">$$\bar{d} \pm t_{\alpha/2, n-1} \cdot \frac{s_d}{\sqrt{n}}$$</td>
+                        </tr>
+
+                        <!-- Case E: Two-Proportion z -->
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 font-semibold text-pink-700">
+                                Two-Proportion $Z$-Test
+                                <span class="block text-[11px] font-normal text-slate-500">Categorical Success Rates</span>
+                            </td>
+                            <td class="p-3">Independent categorical samples, $n_i \hat{p}_i \ge 5$ and $n_i(1-\hat{p}_i) \ge 5$ for both groups.</td>
+                            <td class="p-3 font-mono">
+                                $$z_0 = \frac{\hat{p}_1 - \hat{p}_2}{\sqrt{\bar{p}\bar{q}\left(\frac{1}{n_1} + \frac{1}{n_2}\right)}}$$
+                                <span class="block text-[10px] text-slate-500">$$\bar{p} = \frac{x_1 + x_2}{n_1 + n_2}, \bar{q} = 1 - \bar{p}$$</span>
+                            </td>
+                            <td class="p-3 font-medium">Standard Normal $Z$<br><span class="text-slate-500">(No $\text{df}$ needed)</span></td>
+                            <td class="p-3 text-slate-400 italic">Not covered in core lecture exam bounds</td>
+                        </tr>
+
+                        <!-- Case F: Folded F Test -->
+                        <tr class="hover:bg-slate-50 bg-slate-50/50">
+                            <td class="p-3 font-semibold text-teal-700">
+                                Folded $F$-Test
+                                <span class="block text-[11px] font-normal text-slate-500">Equality of Variances</span>
+                            </td>
+                            <td class="p-3">Used before choosing Pooled vs. Satterthwaite $t$-test. $H_0: \sigma_1^2 = \sigma_2^2$.</td>
+                            <td class="p-3 font-mono">$$F_0 = \frac{\max(s_1^2, s_2^2)}{\min(s_1^2, s_2^2)}$$</td>
+                            <td class="p-3 font-medium">$$\text{DF}_{\text{num}} = n_A-1$$<br>$$\text{DF}_{\text{den}} = n_B-1$$</td>
+                            <td class="p-3 text-slate-500">If $p > \alpha \implies$ Pooled<br>If $p \le \alpha \implies$ Satterthwaite</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: INTERACTIVE DECISION TREE WIZARD -->
+        <!-- ========================================== -->
+        <section id="tab-decision-tree" class="tab-content hidden space-y-8">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center">
+                            <i class="fa-solid fa-sitemap text-emerald-600 mr-2.5"></i>
+                            Interactive Test Selection Wizard
+                        </h2>
+                        <p class="text-sm text-slate-600 mt-1">Answer 3 simple questions about your study design and parameters to determine the exact statistical test, formula, degrees of freedom rule, and SAS code.</p>
+                    </div>
+                    <button onclick="resetWizard()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-lg transition flex items-center">
+                        <i class="fa-solid fa-rotate-left mr-1.5"></i> Restart Wizard
+                    </button>
+                </div>
+
+                <!-- Step Indicators Bar -->
+                <div class="max-w-2xl mx-auto my-8">
+                    <div class="flex items-center justify-between relative">
+                        <!-- Step 1 Dot -->
+                        <button onclick="goToWizardStep(1)" class="flex flex-col items-center group focus:outline-none">
+                            <div id="step-icon-1" class="w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs shadow-md ring-4 ring-blue-100 transition">1</div>
+                            <span id="step-text-1" class="text-xs font-bold text-blue-600 mt-1.5">1. Design</span>
+                        </button>
+                        <div id="step-line-1" class="flex-grow h-0.5 mx-2 bg-slate-200 transition-all duration-300"></div>
+
+                        <!-- Step 2 Dot -->
+                        <button onclick="goToWizardStep(2)" class="flex flex-col items-center group focus:outline-none">
+                            <div id="step-icon-2" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-bold flex items-center justify-center text-xs transition">2</div>
+                            <span id="step-text-2" class="text-xs font-medium text-slate-400 mt-1.5">2. Metric</span>
+                        </button>
+                        <div id="step-line-2" class="flex-grow h-0.5 mx-2 bg-slate-200 transition-all duration-300"></div>
+
+                        <!-- Step 3 Dot -->
+                        <button onclick="goToWizardStep(3)" class="flex flex-col items-center group focus:outline-none">
+                            <div id="step-icon-3" class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 font-bold flex items-center justify-center text-xs transition">3</div>
+                            <span id="step-text-3" class="text-xs font-medium text-slate-400 mt-1.5">3. Variance Info</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Wizard Steps Cards -->
+                <div class="max-w-2xl mx-auto bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8">
+                    <!-- Step 1: Design -->
+                    <div id="wizard-step-1" class="space-y-4">
+                        <span class="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-100 px-2.5 py-1 rounded">Step 1 of 3</span>
+                        <h3 class="text-base font-bold text-slate-900">What is your study design?</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                            <button onclick="wizardAnswer(1, 'independent')" class="p-4 bg-white border-2 border-slate-200 hover:border-blue-500 rounded-xl text-left transition group">
+                                <div class="font-bold text-slate-800 text-sm group-hover:text-blue-600 flex items-center">
+                                    <i class="fa-solid fa-people-arrows text-blue-500 mr-2"></i> Independent Samples
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1">Two separate, unrelated populations (e.g., Male vs. Female, Private vs. Public sector).</p>
+                            </button>
+                            <button onclick="wizardAnswer(1, 'paired')" class="p-4 bg-white border-2 border-slate-200 hover:border-indigo-500 rounded-xl text-left transition group">
+                                <div class="font-bold text-slate-800 text-sm group-hover:text-indigo-600 flex items-center">
+                                    <i class="fa-solid fa-link text-indigo-500 mr-2"></i> Dependent / Paired Samples
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1">Same subjects measured twice or matched pairs (e.g., Pre-test vs. Post-test).</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Metric -->
+                    <div id="wizard-step-2" class="hidden space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-100 px-2.5 py-1 rounded">Step 2 of 3</span>
+                            <button onclick="goToWizardStep(1)" class="text-xs text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Back</button>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900">What data metric are you comparing?</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                            <button onclick="wizardAnswer(2, 'means')" class="p-4 bg-white border-2 border-slate-200 hover:border-blue-500 rounded-xl text-left transition group">
+                                <div class="font-bold text-slate-800 text-sm group-hover:text-blue-600 flex items-center">
+                                    <i class="fa-solid fa-calculator text-blue-500 mr-2"></i> Continuous Means ($\mu_1, \mu_2$)
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1">Comparing numeric averages (e.g., salaries, operation times, test scores).</p>
+                            </button>
+                            <button onclick="wizardAnswer(2, 'proportions')" class="p-4 bg-white border-2 border-slate-200 hover:border-pink-500 rounded-xl text-left transition group">
+                                <div class="font-bold text-slate-800 text-sm group-hover:text-pink-600 flex items-center">
+                                    <i class="fa-solid fa-percent text-pink-500 mr-2"></i> Categorical Proportions ($p_1, p_2$)
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1">Comparing success rates or percentages (e.g., conversion rates, pass rates).</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Variance Info -->
+                    <div id="wizard-step-3" class="hidden space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-100 px-2.5 py-1 rounded">Step 3 of 3</span>
+                            <button onclick="goToWizardStep(2)" class="text-xs text-slate-500 hover:text-slate-800"><i class="fa-solid fa-arrow-left mr-1"></i> Back</button>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900">What is known about the population standard deviations ($\sigma_1, \sigma_2$)?</h3>
+                        <div class="grid grid-cols-1 gap-3 pt-2">
+                            <button onclick="wizardAnswer(3, 'known')" class="p-3.5 bg-white border-2 border-slate-200 hover:border-blue-500 rounded-xl text-left transition group">
+                                <div class="font-bold text-slate-800 text-xs sm:text-sm group-hover:text-blue-600">Both $\sigma_1$ and $\sigma_2$ are KNOWN</div>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Given as numeric population parameters in the problem description.</p>
+                            </button>
+                            <button onclick="wizardAnswer(3, 'unknown-equal')" class="p-3.5 bg-white border-2 border-slate-200 hover:border-emerald-500 rounded-xl text-left transition group">
+                                <div class="font-bold text-slate-800 text-xs sm:text-sm group-hover:text-emerald-600">$\sigma_1, \sigma_2$ UNKNOWN, but assumed EQUAL ($\sigma_1 = \sigma_2$)</div>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Stated in problem, or Folded $F$-test $p\text{-value} > \alpha$.</p>
+                            </button>
+                            <button onclick="wizardAnswer(3, 'unknown-unequal')" class="p-3.5 bg-white border-2 border-slate-200 hover:border-amber-500 rounded-xl text-left transition group">
+                                <div class="font-bold text-slate-800 text-xs sm:text-sm group-hover:text-amber-600">$\sigma_1, \sigma_2$ UNKNOWN and assumed UNEQUAL ($\sigma_1 \neq \sigma_2$)</div>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Stated in problem, or Folded $F$-test $p\text{-value} \le \alpha$.</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Result Display Card -->
+                    <div id="wizard-result" class="hidden space-y-6">
+                        <div class="bg-blue-600 text-white rounded-xl p-5 shadow-lg">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-200">Recommended Statistical Procedure</span>
+                            <h3 id="res-title" class="text-lg sm:text-xl font-extrabold mt-1">Procedure Name</h3>
+                        </div>
+
+                        <!-- Paired t explanation note -->
+                        <div id="res-bypassed-note" class="hidden p-4 bg-indigo-50 border border-indigo-200 rounded-xl text-xs text-indigo-900 leading-relaxed">
+                            <span class="font-bold block mb-1 text-indigo-950"><i class="fa-solid fa-lightbulb text-amber-500 mr-1.5"></i> Why were Metric and Variance steps bypassed?</span>
+                            In paired designs, observations are correlated. Data is subtracted per pair ($d_i = x_{1i} - x_{2i}$) to form a <strong>single sample of differences</strong>. Testing for equal variance ($\sigma_1 = \sigma_2$) is mathematically irrelevant because standard error depends solely on $s_d$.
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                <span class="text-[11px] font-bold text-slate-500 uppercase">Test Statistic Formula</span>
+                                <div id="res-formula" class="mt-2 text-sm font-mono text-slate-900 overflow-x-auto">$$--$$</div>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                <span class="text-[11px] font-bold text-slate-500 uppercase">Degrees of Freedom Rule</span>
+                                <div id="res-df" class="mt-2 text-sm font-bold text-slate-800">$$\text{df} = --$$</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 text-slate-200 p-4 rounded-xl border border-slate-800">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">SAS Code Syntax</span>
+                            </div>
+                            <pre id="res-sas" class="text-xs font-mono text-slate-300">/* SAS Code Here */</pre>
+                        </div>
+
+                        <button id="res-calc-btn" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow transition flex items-center justify-center">
+                            <i class="fa-solid fa-calculator mr-2"></i> Launch Parameter Calculator for this Test
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: MULTI-TEST INTERACTIVE CALCULATOR -->
+        <!-- ========================================== -->
+        <section id="tab-calculator" class="tab-content hidden space-y-8">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <div class="pb-6 border-b border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center">
+                        <i class="fa-solid fa-calculator text-purple-600 mr-2.5"></i>
+                        Multi-Test Interactive Calculator & Derivation Engine
+                    </h2>
+                    <p class="text-sm text-slate-600 mt-1">Select a test scenario or load worked examples straight from the lecture slides to compute exact statistics, critical values, $p$-values, KaTeX derivations, and sampling distribution curves.</p>
+                </div>
+
+                <!-- Test Selection Nav Pills -->
+                <div class="flex overflow-x-auto gap-2 py-4 border-b border-slate-100 custom-scrollbar">
+                    <button id="calc-tab-z-test" onclick="selectCalcTab('z-test')" class="calc-tab-btn px-3 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white shadow whitespace-nowrap">Two-Means Z-Test</button>
+                    <button id="calc-tab-pooled-t" onclick="selectCalcTab('pooled-t')" class="calc-tab-btn px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">Pooled t-Test</button>
+                    <button id="calc-tab-satterthwaite-t" onclick="selectCalcTab('satterthwaite-t')" class="calc-tab-btn px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">Satterthwaite t-Test</button>
+                    <button id="calc-tab-paired-t" onclick="selectCalcTab('paired-t')" class="calc-tab-btn px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">Paired t-Test</button>
+                    <button id="calc-tab-two-prop" onclick="selectCalcTab('two-prop')" class="calc-tab-btn px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">Two-Proportion Z-Test</button>
+                </div>
+
+                <!-- Main Grid Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
+                    <!-- Left Column: Inputs & Controls -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <!-- Worked Examples Dropdown -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                            <label class="block text-xs font-bold text-blue-900 mb-1">Load Lecture Worked Example:</label>
+                            <select onchange="loadPresetExample(this.value)" class="w-full text-xs p-2.5 bg-white border border-blue-300 rounded-lg text-slate-800 font-medium focus:ring-2 focus:ring-blue-500">
+                                <option value="">-- Choose Example from Lecture --</option>
+                                <option value="ex1">Example 4.1 / Ex 1: Two-Means Z (Hotel Rates Malacca vs Penang)</option>
+                                <option value="ex3">Example 4.1 / Ex 3: Pooled t (IT Salaries Private vs Public)</option>
+                                <option value="ex5">Example 4.2 / Ex 5: Satterthwaite t (Dynamic vs Static System)</option>
+                                <option value="ex7">Example 4.3 / Ex 7: Paired t (Peer Tutoring Program)</option>
+                                <option value="ex9">Example 4.4 / Ex 9: Two-Proportion Z (Social Ads vs Email)</option>
+                            </select>
+                        </div>
+
+                        <!-- Dynamic Inputs Form -->
+                        <div id="calc-form" class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-4">
+                            <div id="calc-inputs-container">
+                                <!-- Generated by JS setupCalcInputs -->
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-700">Significance Level ($\alpha$):</label>
+                                    <select id="input-alpha" onchange="calculateCurrentTest()" class="w-full text-xs p-2 border rounded bg-white">
+                                        <option value="0.01">0.01 (1%)</option>
+                                        <option value="0.05" selected>0.05 (5%)</option>
+                                        <option value="0.10">0.10 (10%)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-700">Alternative Hypothesis ($H_A$):</label>
+                                    <select id="input-tail" onchange="calculateCurrentTest()" class="w-full text-xs p-2 border rounded bg-white">
+                                        <option value="two-tailed" selected>Two-Tailed (μ₁ ≠ μ₂)</option>
+                                        <option value="right-tailed">Right-Tailed (μ₁ > μ₂)</option>
+                                        <option value="left-tailed">Left-Tailed (μ₁ < μ₂)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button onclick="calculateCurrentTest()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-lg shadow transition">
+                                <i class="fa-solid fa-calculator mr-1"></i> Recalculate & Derive
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Derivation & Visualization -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <!-- Summary Cards -->
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="bg-slate-900 text-white p-3.5 rounded-xl text-center">
+                                <span class="text-[10px] text-slate-400 font-medium uppercase">Test Statistic</span>
+                                <div id="out-stat" class="text-base sm:text-lg font-bold font-mono text-blue-400 mt-0.5">0.000</div>
+                            </div>
+                            <div class="bg-slate-900 text-white p-3.5 rounded-xl text-center">
+                                <span class="text-[10px] text-slate-400 font-medium uppercase">Critical Value</span>
+                                <div id="out-crit" class="text-base sm:text-lg font-bold font-mono text-amber-400 mt-0.5">±1.960</div>
+                            </div>
+                            <div class="bg-slate-900 text-white p-3.5 rounded-xl text-center">
+                                <span class="text-[10px] text-slate-400 font-medium uppercase">Decision</span>
+                                <div id="out-decision" class="text-xs font-bold mt-1 text-emerald-400">FAIL TO REJECT H₀</div>
+                            </div>
+                        </div>
+
+                        <!-- Chart Canvas Container -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-slate-700">Sampling Distribution & Rejection Region</span>
+                                <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">Shaded = Rejection Region</span>
+                            </div>
+                            <div class="h-48 relative">
+                                <canvas id="distributionChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Mathematical Derivation Box -->
+                        <div class="bg-slate-900 text-slate-100 rounded-xl p-5 space-y-3 font-mono text-xs overflow-x-auto shadow-inner">
+                            <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-amber-400 font-sans font-bold">
+                                <span><i class="fa-solid fa-square-root-variable mr-1.5"></i> Step-by-Step KaTeX Derivation</span>
+                            </div>
+                            <div id="out-derivation" class="leading-relaxed space-y-2">
+                                <!-- Derivation steps appended here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: SAS & CODE INTERPRETER -->
+        <!-- ========================================== -->
+        <section id="tab-sas-code" class="tab-content hidden space-y-8">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <div class="pb-6 border-b border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center">
+                        <i class="fa-solid fa-code text-amber-500 mr-2.5"></i>
+                        SAS Enterprise Guide, Python, & Excel Output Interpreter
+                    </h2>
+                    <p class="text-sm text-slate-600 mt-1">Learn to read SAS `PROC TTEST` outputs, interpret the Folded $F$-test decision rule, and run equivalent statistical models in Python and Excel.</p>
+                </div>
+
+                <!-- SAS PROC TTEST Interactive Inspector Card -->
+                <div class="bg-slate-900 text-slate-100 rounded-2xl p-6 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs font-mono text-slate-400 ml-2">SAS PROC TTEST Output -- testscores.sas7bdat</span>
+                        </div>
+                        <button onclick="copyCode('sas-code-block')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700 transition">
+                            <i class="fa-regular fa-copy mr-1"></i> Copy SAS Code
+                        </button>
+                    </div>
+
+                    <pre id="sas-code-block" class="text-xs font-mono text-amber-300 bg-slate-950 p-3 rounded-lg border border-slate-800">
+/* SAS Two-Sample t-Test */
+PROC TTEST DATA=testscores ALPHA=0.05;
+  CLASS Gender;
+  VAR SATScore;
+RUN;</pre>
+
+                    <!-- SAS Table Visualizer -->
+                    <div class="overflow-x-auto pt-2">
+                        <table class="w-full text-left font-mono text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-800 text-slate-300 border-b border-slate-700">
+                                    <th class="p-2">Group</th>
+                                    <th class="p-2">N</th>
+                                    <th class="p-2">Mean</th>
+                                    <th class="p-2">Std Dev</th>
+                                    <th class="p-2">Std Err</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800 text-slate-300">
+                                <tr><td class="p-2">Female</td><td class="p-2">40</td><td class="p-2">1221.0</td><td class="p-2">157.4</td><td class="p-2">24.8864</td></tr>
+                                <tr><td class="p-2">Male</td><td class="p-2">40</td><td class="p-2">1160.3</td><td class="p-2">130.3</td><td class="p-2">20.7008</td></tr>
+                                <tr class="text-slate-400"><td class="p-2">Diff (F-M)</td><td class="p-2">--</td><td class="p-2">60.75</td><td class="p-2">144.8</td><td class="p-2">32.3706</td></tr>
+                            </tbody>
+                        </table>
+
+                        <table class="w-full text-left font-mono text-xs border-collapse mt-4">
+                            <thead>
+                                <tr class="bg-slate-800 text-slate-300 border-b border-slate-700">
+                                    <th class="p-2">Method</th>
+                                    <th class="p-2">Variances</th>
+                                    <th class="p-2">DF</th>
+                                    <th class="p-2">t Value</th>
+                                    <th class="p-2">Pr > |t|</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800">
+                                <tr class="bg-emerald-950/40 text-emerald-300 border-l-4 border-emerald-500">
+                                    <td class="p-2 font-bold">Pooled</td>
+                                    <td class="p-2">Equal</td>
+                                    <td class="p-2">78</td>
+                                    <td class="p-2">1.86</td>
+                                    <td class="p-2 font-bold">0.0643 (USE THIS)</td>
+                                </tr>
+                                <tr class="text-slate-400">
+                                    <td class="p-2">Satterthwaite</td>
+                                    <td class="p-2">Unequal</td>
+                                    <td class="p-2">75.497</td>
+                                    <td class="p-2">1.86</td>
+                                    <td class="p-2">0.0644</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Folded F Table -->
+                        <div class="mt-4 p-3 bg-amber-950/30 border border-amber-500/40 rounded-xl text-amber-200">
+                            <span class="font-bold block text-xs mb-1"><i class="fa-solid fa-triangle-exclamation text-amber-400 mr-1"></i> Equality of Variances (Folded F-Test Rule):</span>
+                            <div class="text-xs">Num DF = 39, Den DF = 39, $F = 1.45$, <strong class="text-amber-300 font-bold font-mono">Pr > F = 0.2545</strong></div>
+                            <p class="text-[11px] text-amber-100/80 mt-1 leading-relaxed">
+                                <strong>Interpretation:</strong> Since Folded $F$ $p\text{-value} = 0.2545 > 0.05$, we fail to reject $H_0: \sigma_1^2 = \sigma_2^2$. Variances are equal $\implies$ Read the <strong>Pooled Row</strong> ($p = 0.0643 > 0.05 \implies \text{Fail to reject } H_0$).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: BLOOM'S TAXONOMY QUIZ BANK -->
+        <!-- ========================================== -->
+        <section id="tab-quizzes" class="tab-content hidden space-y-8">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <div class="pb-6 border-b border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center">
+                        <i class="fa-solid fa-graduation-cap text-pink-500 mr-2.5"></i>
+                        Bloom's Taxonomy Conceptual Quiz Bank
+                    </h2>
+                    <p class="text-sm text-slate-600 mt-1">Practice active recall, formula application, and statistical evaluation structured across Bloom's Taxonomy learning levels.</p>
+                </div>
+
+                <!-- Filter Pills -->
+                <div class="flex overflow-x-auto gap-2 py-4 custom-scrollbar">
+                    <button onclick="filterBloomQuiz('all')" class="bloom-filter-btn active px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold text-xs transition">All Levels</button>
+                    <button onclick="filterBloomQuiz('remember')" class="bloom-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-medium transition">Remembering (L1)</button>
+                    <button onclick="filterBloomQuiz('understand')" class="bloom-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-medium transition">Understanding (L2)</button>
+                    <button onclick="filterBloomQuiz('apply')" class="bloom-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-medium transition">Applying (L3)</button>
+                    <button onclick="filterBloomQuiz('analyze')" class="bloom-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-medium transition">Analyzing (L4)</button>
+                </div>
+
+                <div id="bloom-quiz-container" class="space-y-6 mt-4">
+                    <!-- Dynamic quiz cards rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 6: TIMED EXAM DRILL -->
+        <!-- ========================================== -->
+        <section id="tab-exam-drill" class="tab-content hidden space-y-8">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center">
+                            <i class="fa-solid fa-stopwatch text-rose-500 mr-2.5"></i>
+                            10-Minute Timed Lecture Exam Drill
+                        </h2>
+                        <p class="text-sm text-slate-600 mt-1">Recreates the lecture script timed individual exam drill. Answer 5 questions under exam conditions (17 marks total).</p>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-slate-900 text-rose-400 font-mono font-bold text-base px-4 py-2 rounded-xl border border-slate-800 shadow">
+                            <i class="fa-solid fa-clock mr-2"></i><span id="drill-timer">10:00</span>
+                        </div>
+                        <button id="drill-start-btn" onclick="toggleDrillTimer()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow transition">
+                            Start Timer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Drill Questions Form -->
+                <div class="space-y-8 mt-6">
+                    <!-- Q1 -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2 border-slate-200">
+                            <span class="font-bold text-xs text-blue-700">Question 1 [3 Marks]</span>
+                            <span class="text-xs text-slate-500 font-mono">Two-Means Z</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            A sports scientist compares weekly running distance (km) of runners in KL ($n_1 = 40, \bar{x}_1 = 28.4, \sigma_1 = 5.8$) and Penang ($n_2 = 36, \bar{x}_2 = 25.9, \sigma_2 = 6.4$). At $\alpha = 0.05$, test whether the mean weekly running distance differs between the two cities.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs">
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q1" value="A"> <span>A) Reject $H_0$; $z_0 = 1.777 > 1.645$</span>
+                            </label>
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q1" value="B"> <span>B) Do NOT reject $H_0$; $|z_0| = 1.777 < 1.96$</span>
+                            </label>
+                        </div>
+                        <div id="drill-sol-1" class="hidden text-xs bg-slate-900 text-slate-100 p-3 rounded-lg font-mono"></div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2 border-slate-200">
+                            <span class="font-bold text-xs text-emerald-700">Question 2 [4 Marks]</span>
+                            <span class="text-xs text-slate-500 font-mono">Pooled t-Test</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            Comparing GPA of Morning ($n_1=15, \bar{x}_1=3.41, s_1=0.38$) vs Afternoon ($n_2=12, \bar{x}_2=3.18, s_2=0.42$) students. Assume normal distributions and equal population standard deviations. At $\alpha = 0.05$, test if Morning students have a higher mean GPA.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs">
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q2" value="A"> <span>A) Do NOT reject $H_0$; $t_0 = 1.492 < 1.708, \text{df}=25$</span>
+                            </label>
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q2" value="B"> <span>B) Reject $H_0$; $t_0 = 1.492 > 1.314, \text{df}=27$</span>
+                            </label>
+                        </div>
+                        <div id="drill-sol-2" class="hidden text-xs bg-slate-900 text-slate-100 p-3 rounded-lg font-mono"></div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2 border-slate-200">
+                            <span class="font-bold text-xs text-amber-700">Question 3 [4 Marks]</span>
+                            <span class="text-xs text-slate-500 font-mono">Satterthwaite t-Test</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            Comparing monthly transaction amounts (RM) between iOS ($n_1=20, \bar{x}_1=1850, s_1=320$) and Android ($n_2=18, \bar{x}_2=1640, s_2=480$). Assume unequal standard deviations. Compute Welch $\text{df}$ (round down) and test at $\alpha = 0.05$ right-tailed.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs">
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q3" value="A"> <span>A) Do NOT reject $H_0$; $t_0 = 1.569 < 1.699, \text{df}=29$</span>
+                            </label>
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q3" value="B"> <span>B) Reject $H_0$; $t_0 = 1.569 > 1.688, \text{df}=36$</span>
+                            </label>
+                        </div>
+                        <div id="drill-sol-3" class="hidden text-xs bg-slate-900 text-slate-100 p-3 rounded-lg font-mono"></div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2 border-slate-200">
+                            <span class="font-bold text-xs text-purple-700">Question 4 [3 Marks]</span>
+                            <span class="text-xs text-slate-500 font-mono">Paired t-Test</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            8 participants calorie intake differences (After - Before): -180, -240, -150, -200, -310, -175, -225, -190. At $\alpha = 0.05$, did counselling reduce calorie intake?
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs">
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q4" value="A"> <span>A) Reject $H_0$; $t_0 = -11.86 < -1.895, \text{df}=7$</span>
+                            </label>
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q4" value="B"> <span>B) Do NOT reject $H_0$; $t_0 = -1.86 > -1.895, \text{df}=7$</span>
+                            </label>
+                        </div>
+                        <div id="drill-sol-4" class="hidden text-xs bg-slate-900 text-slate-100 p-3 rounded-lg font-mono"></div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2 border-slate-200">
+                            <span class="font-bold text-xs text-pink-700">Question 5 [3 Marks]</span>
+                            <span class="text-xs text-slate-500 font-mono">Two-Proportion Z</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            Impulse purchase survey: 310/380 (18-34 age group) vs 72/120 (35-55 age group). Test if impulse purchase proportion differs at $\alpha = 0.05$.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs">
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q5" value="A"> <span>A) Reject $H_0$; $|z_0| = 4.854 > 1.96, \bar{p} = 0.764$</span>
+                            </label>
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q5" value="B"> <span>B) Do NOT reject $H_0$; $z_0 = 1.854 < 1.96$</span>
+                            </label>
+                        </div>
+                        <div id="drill-sol-5" class="hidden text-xs bg-slate-900 text-slate-100 p-3 rounded-lg font-mono"></div>
+                    </div>
+
+                    <!-- Q6 -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2 border-slate-200">
+                            <span class="font-bold text-xs text-teal-700">Question 6 [3 Marks]</span>
+                            <span class="text-xs text-slate-500 font-mono">Folded F-Test</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            A food analyst compares consistency of protein content across two brands of protein bars. Brand A: $n_1 = 12,\; s_1 = 2.3\text{ g}$. Brand B: $n_2 = 15,\; s_2 = 1.1\text{ g}$. SAS PROC TTEST outputs Folded $F = 4.372,\; p\text{-value} = 0.0082$. At $\alpha = 0.05$, what is the correct conclusion about variance equality and which $t$-test row should be reported?
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs">
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q6" value="A"> <span>A) $p = 0.0082 \leq 0.05$ → Reject $H_0:\sigma_1^2=\sigma_2^2$ → Report Satterthwaite row</span>
+                            </label>
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q6" value="B"> <span>B) $p = 0.0082 \leq 0.05$ → Reject $H_0:\sigma_1^2=\sigma_2^2$ → Report Pooled row</span>
+                            </label>
+                        </div>
+                        <div id="drill-sol-6" class="hidden text-xs bg-slate-900 text-slate-100 p-3 rounded-lg font-mono"></div>
+                    </div>
+
+                    <!-- Q7 -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2 border-slate-200">
+                            <span class="font-bold text-xs text-blue-700">Question 7 [4 Marks]</span>
+                            <span class="text-xs text-slate-500 font-mono">Pooled t-Test</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            A manager compares average call handling time between two training programmes. New Training: $n_1 = 18,\; \bar{x}_1 = 4.2\text{ min},\; s_1 = 0.85\text{ min}$. Old Training: $n_2 = 16,\; \bar{x}_2 = 4.9\text{ min},\; s_2 = 0.78\text{ min}$. Folded $F$ $p\text{-value} = 0.68$. At $\alpha = 0.01$, test $H_0: \mu_1 = \mu_2$ (two-tailed).
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs">
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q7" value="A"> <span>A) Do NOT reject $H_0$; $t_0 = -2.490,\; |t_0| < 2.738,\; \text{df}=32$</span>
+                            </label>
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q7" value="B"> <span>B) Reject $H_0$; $t_0 = -2.490,\; |t_0| > 2.042,\; \text{df}=32$</span>
+                            </label>
+                        </div>
+                        <div id="drill-sol-7" class="hidden text-xs bg-slate-900 text-slate-100 p-3 rounded-lg font-mono"></div>
+                    </div>
+
+                    <!-- Q8 -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2 border-slate-200">
+                            <span class="font-bold text-xs text-amber-700">Question 8 [4 Marks]</span>
+                            <span class="text-xs text-slate-500 font-mono">Satterthwaite t-Test</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            Delivery time comparison between two suppliers. Supplier A: $n_1 = 10,\; \bar{x}_1 = 5.8\text{ days},\; s_1 = 1.2\text{ days}$. Supplier B: $n_2 = 8,\; \bar{x}_2 = 6.5\text{ days},\; s_2 = 2.4\text{ days}$. Folded $F$ $p\text{-value} = 0.015$. Compute Welch $\text{df}$ (round down). At $\alpha = 0.05$, test $H_0: \mu_1 \geq \mu_2$ vs $H_A: \mu_1 < \mu_2$ (left-tailed — does Supplier A deliver faster?).
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs">
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q8" value="A"> <span>A) Do NOT reject $H_0$; $t_0 = -0.753 > -1.833,\; \text{df}=9$</span>
+                            </label>
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q8" value="B"> <span>B) Reject $H_0$; $t_0 = -0.753 < -0.606,\; \text{df}=10$</span>
+                            </label>
+                        </div>
+                        <div id="drill-sol-8" class="hidden text-xs bg-slate-900 text-slate-100 p-3 rounded-lg font-mono"></div>
+                    </div>
+
+                    <!-- Q9 -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2 border-slate-200">
+                            <span class="font-bold text-xs text-purple-700">Question 9 [4 Marks]</span>
+                            <span class="text-xs text-slate-500 font-mono">Paired t-Test</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            Ten UX testers rated app usability before and after a redesign. Differences (After − Before): $+12, +8, +15, -3, +10, +6, +9, +14, +2, +7$. At $\alpha = 0.05$, test $H_0: \mu_d = 0$ vs $H_A: \mu_d \neq 0$ (two-tailed). Did the redesign significantly change usability scores?
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs">
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q9" value="A"> <span>A) Reject $H_0$; $t_0 = 4.638 > 2.262,\; \text{df}=9$</span>
+                            </label>
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q9" value="B"> <span>B) Do NOT reject $H_0$; $t_0 = 4.638 < 2.228,\; \text{df}=10$</span>
+                            </label>
+                        </div>
+                        <div id="drill-sol-9" class="hidden text-xs bg-slate-900 text-slate-100 p-3 rounded-lg font-mono"></div>
+                    </div>
+
+                    <!-- Q10 -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2 border-slate-200">
+                            <span class="font-bold text-xs text-pink-700">Question 10 [3 Marks]</span>
+                            <span class="text-xs text-slate-500 font-mono">Two-Proportion Z</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                            Customer satisfaction survey: Store East — 142 out of 200 satisfied ($\hat{p}_1 = 0.710$). Store West — 168 out of 200 satisfied ($\hat{p}_2 = 0.840$). At $\alpha = 0.05$, test $H_0: p_1 \geq p_2$ vs $H_A: p_1 < p_2$ (left-tailed — is Store East's satisfaction rate lower?).
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 text-xs">
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q10" value="A"> <span>A) Reject $H_0$; $z_0 = -3.113 < -1.645,\; \bar{p} = 0.775$</span>
+                            </label>
+                            <label class="p-3 bg-white border border-slate-200 rounded-lg flex items-center space-x-2 cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="drill_q10" value="B"> <span>B) Do NOT reject $H_0$; $z_0 = -3.113 > -1.96$ (wrong critical value)</span>
+                            </label>
+                        </div>
+                        <div id="drill-sol-10" class="hidden text-xs bg-slate-900 text-slate-100 p-3 rounded-lg font-mono"></div>
+                    </div>
+
+                    <button onclick="submitExamDrill()" class="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm rounded-xl shadow transition">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> Submit Drill & Grade Performance
+                    </button>
+
+                    <!-- Score Card -->
+                    <div id="drill-results-summary" class="hidden bg-slate-900 text-white p-6 rounded-2xl space-y-3 text-center">
+                        <span class="text-xs font-bold uppercase tracking-widest text-rose-400">Final Drill Score</span>
+                        <div id="drill-score-display" class="text-3xl font-extrabold text-white">0 / 35 Marks</div>
+                        <p id="drill-feedback-text" class="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 text-xs py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p>STAT1114 / STAT2044 Statistics for Data Analytics · Topic 6: Two-Sample Hypothesis Testing</p>
+            <p class="text-slate-500">Designed for Undergraduate Data Analytics & Artificial Intelligence Students</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Global State & Variables
+        let currentTab = 'concepts';
+        let currentCalcType = 'z-test';
+        let wizardState = { design: '', metric: '', variance: '', currentStep: 1 };
+        let chartInstance = null;
+        let drillTimerInterval = null;
+        let drillTimeLeft = 600; // 10 minutes in seconds
+        let drillTimerRunning = false;
+        let userQuizScore = 0;
+
+        // Initialize KaTeX render on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            window.triggerKaTeX();
+            setupCalcInputs('z-test');
+            renderBloomQuizBank();
+        });
+
+        window.triggerKaTeX = function(element = document.body) {
+            if (typeof renderMathInElement === 'function') {
+                try {
+                    renderMathInElement(element, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true}
+                        ],
+                        throwOnError : false
+                    });
+                } catch(e) {
+                    console.error("KaTeX rendering error:", e);
+                }
+            } else {
+                setTimeout(() => window.triggerKaTeX(element), 100);
+            }
+        };
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-nav-item').forEach(el => {
+                el.classList.remove('bg-slate-800', 'text-white');
+                el.classList.add('text-slate-300');
+            });
+
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            if (targetTab) {
+                targetTab.classList.remove('hidden');
+            }
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.add('bg-slate-800', 'text-white');
+            }
+
+            currentTab = tabId;
+            triggerKaTeX();
+
+            if (tabId === 'calculator') {
+                calculateCurrentTest();
+            }
+        }
+
+        // ==========================================
+        // WIZARD LOGIC
+        function goToWizardStep(stepNum) {
+            // Guard against jumping ahead to unanswered steps
+            if (stepNum === 2 && !wizardState.design) return;
+            if (stepNum === 3 && (!wizardState.design || (wizardState.design === 'independent' && !wizardState.metric))) return;
+
+            document.getElementById('wizard-result').classList.add('hidden');
+            document.getElementById('wizard-step-1').classList.add('hidden');
+            document.getElementById('wizard-step-2').classList.add('hidden');
+            document.getElementById('wizard-step-3').classList.add('hidden');
+
+            if (stepNum === 1) {
+                document.getElementById('wizard-step-1').classList.remove('hidden');
+                updateWizardStepUI(1);
+            } else if (stepNum === 2) {
+                if (wizardState.design === 'paired') {
+                    updateWizardStepUI(1, true, true);
+                    showWizardResult('paired');
+                } else {
+                    document.getElementById('wizard-step-2').classList.remove('hidden');
+                    updateWizardStepUI(2);
+                }
+            } else if (stepNum === 3) {
+                if (wizardState.design === 'paired') {
+                    updateWizardStepUI(1, true, true);
+                    showWizardResult('paired');
+                } else if (wizardState.metric === 'proportions') {
+                    updateWizardStepUI(2, true);
+                    showWizardResult('proportions');
+                } else {
+                    document.getElementById('wizard-step-3').classList.remove('hidden');
+                    updateWizardStepUI(3);
+                }
+            }
+        }
+
+        function updateWizardStepUI(step, isFinal = false, isBypassedPaired = false) {
+            wizardState.currentStep = step;
+            for (let i = 1; i <= 3; i++) {
+                const icon = document.getElementById(`step-icon-${i}`);
+                const text = document.getElementById(`step-text-${i}`);
+
+                if (isBypassedPaired && i > 1) {
+                    icon.className = "w-7 h-7 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center mb-1 shadow-sm transition-all";
+                    icon.innerHTML = '<i class="fa-solid fa-forward text-xs"></i>';
+                    text.className = "font-medium text-slate-400";
+                    text.innerText = i === 2 ? "Metric (N/A)" : "Variance (N/A)";
+                } else if (i < step || (i === step && isFinal)) {
+                    // Completed step state
+                    icon.className = "w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center mb-1 shadow-sm transition-all";
+                    icon.innerHTML = '<i class="fa-solid fa-check text-xs"></i>';
+                    text.className = "font-bold text-emerald-600";
+                    if (i === 2) text.innerText = "Metric";
+                    if (i === 3) text.innerText = "Variance Info";
+                } else if (i === step && !isFinal) {
+                    // Active step state
+                    icon.className = "w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center mb-1 shadow-sm transition-all ring-4 ring-blue-100";
+                    icon.innerText = i;
+                    text.className = "font-bold text-blue-600";
+                    if (i === 2) text.innerText = "Metric";
+                    if (i === 3) text.innerText = "Variance Info";
+                } else {
+                    // Future step state
+                    icon.className = "w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center mb-1 shadow-sm transition-all";
+                    icon.innerText = i;
+                    text.className = "font-medium text-slate-400";
+                    if (i === 2) text.innerText = "Metric";
+                    if (i === 3) text.innerText = "Variance Info";
+                }
+            }
+
+            // Connecting Progress Lines
+            const line1 = document.getElementById('step-line-1');
+            const line2 = document.getElementById('step-line-2');
+
+            line1.className = `flex-grow h-0.5 mx-2 transition-all duration-300 ${step > 1 || isBypassedPaired ? 'bg-emerald-500' : 'bg-slate-200'}`;
+            line2.className = `flex-grow h-0.5 mx-2 transition-all duration-300 ${step > 2 || (step === 3 && isFinal) || isBypassedPaired ? 'bg-emerald-500' : 'bg-slate-200'}`;
+        }
+
+        function wizardAnswer(step, answer) {
+            if (step === 1) {
+                wizardState.design = answer;
+                document.getElementById('wizard-step-1').classList.add('hidden');
+                if (answer === 'paired') {
+                    updateWizardStepUI(1, true, true);
+                    showWizardResult('paired');
+                } else {
+                    updateWizardStepUI(2);
+                    document.getElementById('wizard-step-2').classList.remove('hidden');
+                }
+            } else if (step === 2) {
+                wizardState.metric = answer;
+                document.getElementById('wizard-step-2').classList.add('hidden');
+                if (answer === 'proportions') {
+                    updateWizardStepUI(2, true);
+                    showWizardResult('proportions');
+                } else {
+                    updateWizardStepUI(3);
+                    document.getElementById('wizard-step-3').classList.remove('hidden');
+                }
+            } else if (step === 3) {
+                wizardState.variance = answer;
+                document.getElementById('wizard-step-3').classList.add('hidden');
+                updateWizardStepUI(3, true);
+                showWizardResult(answer);
+            }
+        }
+
+        function showWizardResult(type) {
+            const resCard = document.getElementById('wizard-result');
+            resCard.classList.remove('hidden');
+
+            const title = document.getElementById('res-title');
+            const formula = document.getElementById('res-formula');
+            const df = document.getElementById('res-df');
+            const sas = document.getElementById('res-sas');
+            const btn = document.getElementById('res-calc-btn');
+            const bypassNote = document.getElementById('res-bypassed-note');
+
+            if (type === 'paired') {
+                title.innerText = "Paired t-Test (Dependent Samples)";
+                formula.innerHTML = "$$t_0 = \\frac{\\bar{d} - 0}{s_d / \\sqrt{n}}$$";
+                df.innerHTML = "$$\\text{df} = n_{\\text{pairs}} - 1$$";
+                sas.innerText = "PROC TTEST DATA=scores;\n  PAIRED Posttest*Pretest;\nRUN;";
+                btn.onclick = () => { switchTab('calculator'); selectCalcTab('paired-t'); };
+                if (bypassNote) bypassNote.classList.remove('hidden');
+            } else if (type === 'proportions') {
+                title.innerText = "Two-Proportion Z-Test";
+                formula.innerHTML = "$$z_0 = \\frac{\\hat{p}_1 - \\hat{p}_2}{\\sqrt{\\bar{p}\\bar{q}(1/n_1 + 1/n_2)}}$$";
+                df.innerHTML = "Standard Normal $Z$ (No $\\text{df}$)";
+                sas.innerText = "PROC FREQ DATA=survey;\n  TABLES Group*Outcome / RISKDIFF CHISQ;\nRUN;";
+                btn.onclick = () => { switchTab('calculator'); selectCalcTab('two-prop'); };
+                if (bypassNote) bypassNote.classList.add('hidden');
+            } else if (type === 'known') {
+                title.innerText = "Two-Means Z-Test (Known Standard Deviations)";
+                formula.innerHTML = "$$z_0 = \\frac{\\bar{x}_1 - \\bar{x}_2}{\\sqrt{\\sigma_1^2/n_1 + \\sigma_2^2/n_2}}$$";
+                df.innerHTML = "Standard Normal $Z$ (No $\\text{df}$)";
+                sas.innerText = "/* Manual Z-calculation or custom SAS macro */";
+                btn.onclick = () => { switchTab('calculator'); selectCalcTab('z-test'); };
+                if (bypassNote) bypassNote.classList.add('hidden');
+            } else if (type === 'unknown-equal') {
+                title.innerText = "Pooled t-Test (Equal Population Variances)";
+                formula.innerHTML = "$$t_0 = \\frac{\\bar{x}_1 - \\bar{x}_2}{s_p \\sqrt{1/n_1 + 1/n_2}}$$";
+                df.innerHTML = "$$\\text{df} = n_1 + n_2 - 2$$";
+                sas.innerText = "PROC TTEST DATA=data;\n  CLASS group;\n  VAR score;\nRUN; /* Read Pooled Row */";
+                btn.onclick = () => { switchTab('calculator'); selectCalcTab('pooled-t'); };
+                if (bypassNote) bypassNote.classList.add('hidden');
+            } else if (type === 'unknown-unequal') {
+                title.innerText = "Satterthwaite / Welch t-Test (Unequal Variances)";
+                formula.innerHTML = "$$t_0 = \\frac{\\bar{x}_1 - \\bar{x}_2}{\\sqrt{s_1^2/n_1 + s_2^2/n_2}}$$";
+                df.innerHTML = "Welch formula (Always round DOWN)";
+                sas.innerText = "PROC TTEST DATA=data;\n  CLASS group;\n  VAR score;\nRUN; /* Read Satterthwaite Row */";
+                btn.onclick = () => { switchTab('calculator'); selectCalcTab('satterthwaite-t'); };
+                if (bypassNote) bypassNote.classList.add('hidden');
+            }
+            triggerKaTeX();
+        }
+
+        function resetWizard() {
+            wizardState = { design: '', metric: '', variance: '', currentStep: 1 };
+            document.getElementById('wizard-result').classList.add('hidden');
+            document.getElementById('wizard-step-2').classList.add('hidden');
+            document.getElementById('wizard-step-3').classList.add('hidden');
+            document.getElementById('wizard-step-1').classList.remove('hidden');
+            updateWizardStepUI(1, false);
+        }
+
+        // ==========================================
+        // CALCULATOR ENGINE & PRESETS
+        // ==========================================
+        function selectCalcTab(calcType) {
+            currentCalcType = calcType;
+            document.querySelectorAll('.calc-tab-btn').forEach(btn => {
+                btn.className = "calc-tab-btn px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap transition";
+            });
+
+            const activeTab = document.getElementById(`calc-tab-${calcType}`);
+            if (activeTab) {
+                activeTab.className = "calc-tab-btn px-3 py-2 text-xs font-semibold rounded-lg bg-blue-600 text-white shadow whitespace-nowrap transition";
+            }
+
+            setupCalcInputs(calcType);
+            calculateCurrentTest();
+        }
+
+        function setupCalcInputs(calcType) {
+            const container = document.getElementById('calc-inputs-container');
+            if (!container) return;
+
+            if (calcType === 'z-test') {
+                container.innerHTML = `
+                    <div class="text-xs font-bold text-slate-800 border-b pb-1 mb-2">Group 1 Parameters (e.g. Malacca)</div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div><label class="block text-[11px] text-slate-600">Mean ($\\bar{x}_1$):</label><input type="number" step="any" id="x1" value="268" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">Std Dev ($\\sigma_1$):</label><input type="number" step="any" id="sd1" value="25.62" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">Sample Size ($n_1$):</label><input type="number" id="n1" value="50" class="w-full text-xs p-2 border rounded"></div>
+                    </div>
+                    <div class="text-xs font-bold text-slate-800 border-b pb-1 mb-2 pt-2">Group 2 Parameters (e.g. Penang)</div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div><label class="block text-[11px] text-slate-600">Mean ($\\bar{x}_2$):</label><input type="number" step="any" id="x2" value="294" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">Std Dev ($\\sigma_2$):</label><input type="number" step="any" id="sd2" value="34.83" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">Sample Size ($n_2$):</label><input type="number" id="n2" value="50" class="w-full text-xs p-2 border rounded"></div>
+                    </div>
+                `;
+            } else if (calcType === 'pooled-t' || calcType === 'satterthwaite-t') {
+                container.innerHTML = `
+                    <div class="text-xs font-bold text-slate-800 border-b pb-1 mb-2">Group 1 Parameters (Sample)</div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div><label class="block text-[11px] text-slate-600">Mean ($\\bar{x}_1$):</label><input type="number" step="any" id="x1" value="${calcType === 'pooled-t' ? '88.19' : '394.6'}" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">Sample SD ($s_1$):</label><input type="number" step="any" id="sd1" value="${calcType === 'pooled-t' ? '26.21' : '84.7'}" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">Sample Size ($n_1$):</label><input type="number" id="n1" value="${calcType === 'pooled-t' ? '35' : '14'}" class="w-full text-xs p-2 border rounded"></div>
+                    </div>
+                    <div class="text-xs font-bold text-slate-800 border-b pb-1 mb-2 pt-2">Group 2 Parameters (Sample)</div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div><label class="block text-[11px] text-slate-600">Mean ($\\bar{x}_2$):</label><input type="number" step="any" id="x2" value="${calcType === 'pooled-t' ? '73.18' : '468.3'}" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">Sample SD ($s_2$):</label><input type="number" step="any" id="sd2" value="${calcType === 'pooled-t' ? '23.95' : '38.2'}" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">Sample Size ($n_2$):</label><input type="number" id="n2" value="${calcType === 'pooled-t' ? '30' : '6'}" class="w-full text-xs p-2 border rounded"></div>
+                    </div>
+                `;
+            } else if (calcType === 'paired-t') {
+                container.innerHTML = `
+                    <div class="text-xs font-bold text-slate-800 border-b pb-1 mb-2">Paired Differences Parameters ($d_i = x_{1i} - x_{2i}$)</div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div><label class="block text-[11px] text-slate-600">Mean Diff ($\\bar{d}$):</label><input type="number" step="any" id="d_mean" value="11.3" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">SD of Diff ($s_d$):</label><input type="number" step="any" id="sd_d" value="2.4967" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">Number of Pairs ($n$):</label><input type="number" id="n_pairs" value="10" class="w-full text-xs p-2 border rounded"></div>
+                    </div>
+                `;
+            } else if (calcType === 'two-prop') {
+                container.innerHTML = `
+                    <div class="text-xs font-bold text-slate-800 border-b pb-1 mb-2">Group 1 Success Rates (e.g. Social Ads)</div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="block text-[11px] text-slate-600">Successes ($x_1$):</label><input type="number" id="x1" value="67" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">Total Cases ($n_1$):</label><input type="number" id="n1" value="73" class="w-full text-xs p-2 border rounded"></div>
+                    </div>
+                    <div class="text-xs font-bold text-slate-800 border-b pb-1 mb-2 pt-2">Group 2 Success Rates (e.g. Email)</div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="block text-[11px] text-slate-600">Successes ($x_2$):</label><input type="number" id="x2" value="60" class="w-full text-xs p-2 border rounded"></div>
+                        <div><label class="block text-[11px] text-slate-600">Total Cases ($n_2$):</label><input type="number" id="n2" value="83" class="w-full text-xs p-2 border rounded"></div>
+                    </div>
+                `;
+            }
+            triggerKaTeX(container);
+        }
+
+        function loadPresetExample(presetVal) {
+            const tailSelect = document.getElementById('input-tail');
+            const alphaSelect = document.getElementById('input-alpha');
+
+            if (presetVal === 'ex1') {
+                selectCalcTab('z-test');
+                if (tailSelect) tailSelect.value = 'two-tailed';
+                if (alphaSelect) alphaSelect.value = '0.05';
+                document.getElementById('x1').value = '268';
+                document.getElementById('sd1').value = '25.62';
+                document.getElementById('n1').value = '50';
+                document.getElementById('x2').value = '294';
+                document.getElementById('sd2').value = '34.83';
+                document.getElementById('n2').value = '50';
+            } else if (presetVal === 'ex3') {
+                selectCalcTab('pooled-t');
+                if (tailSelect) tailSelect.value = 'two-tailed';
+                if (alphaSelect) alphaSelect.value = '0.05';
+                document.getElementById('x1').value = '88.19';
+                document.getElementById('sd1').value = '26.21';
+                document.getElementById('n1').value = '35';
+                document.getElementById('x2').value = '73.18';
+                document.getElementById('sd2').value = '23.95';
+                document.getElementById('n2').value = '30';
+            } else if (presetVal === 'ex5') {
+                selectCalcTab('satterthwaite-t');
+                if (tailSelect) tailSelect.value = 'left-tailed';
+                if (alphaSelect) alphaSelect.value = '0.05';
+                document.getElementById('x1').value = '394.6';
+                document.getElementById('sd1').value = '84.7';
+                document.getElementById('n1').value = '14';
+                document.getElementById('x2').value = '468.3';
+                document.getElementById('sd2').value = '38.2';
+                document.getElementById('n2').value = '6';
+            } else if (presetVal === 'ex7') {
+                selectCalcTab('paired-t');
+                if (tailSelect) tailSelect.value = 'right-tailed';
+                if (alphaSelect) alphaSelect.value = '0.05';
+                document.getElementById('d_mean').value = '11.3';
+                document.getElementById('sd_d').value = '2.4967';
+                document.getElementById('n_pairs').value = '10';
+            } else if (presetVal === 'ex9') {
+                selectCalcTab('two-prop');
+                if (tailSelect) tailSelect.value = 'right-tailed';
+                if (alphaSelect) alphaSelect.value = '0.05';
+                document.getElementById('x1').value = '67';
+                document.getElementById('n1').value = '73';
+                document.getElementById('x2').value = '60';
+                document.getElementById('n2').value = '83';
+            }
+            calculateCurrentTest();
+        }
+
+        // Mathematical Statistical Distribution Helper Functions
+        function normCDF(z) {
+            const b1 = 0.319381530, b2 = -0.356563782, b3 = 1.781477937, b4 = -1.821255978, b5 = 1.330274429;
+            const p = 0.2316419, c = 0.39894228;
+            if (z >= 0) {
+                let t = 1.0 / (1.0 + p * z);
+                return (1.0 - c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1));
+            } else {
+                let t = 1.0 / (1.0 - p * z);
+                return (c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1));
+            }
+        }
+
+        function normInv(p) {
+            if (p <= 0 || p >= 1) return 0;
+            if (p < 0.5) return -rationalApprox(Math.sqrt(-2.0 * Math.log(p)));
+            return rationalApprox(Math.sqrt(-2.0 * Math.log(1.0 - p)));
+        }
+
+        function rationalApprox(t) {
+            const c = [2.515517, 0.802853, 0.010328];
+            const d = [1.432788, 0.189269, 0.001308];
+            return t - ((c[2] * t + c[1]) * t + c[0]) / (((d[2] * t + d[1]) * t + d[0]) * t + 1.0);
+        }
+
+        function tInv(p, df) {
+            let z = normInv(p);
+            let z2 = z * z;
+            return z + (z * z2 + z) / (4 * df) + (5 * z * z2 * z2 + 16 * z * z2 + 3 * z) / (96 * df * df);
+        }
+
+        function tCDF(t, df) {
+            let z = t / Math.sqrt(df / (df > 2 ? df - 2 : 1));
+            return normCDF(z);
+        }
+
+        function calculateCurrentTest() {
+            const alpha = parseFloat(document.getElementById('input-alpha').value) || 0.05;
+            const tail = document.getElementById('input-tail').value;
+            let stat = 0, dfVal = null, pVal = 0, critVal = 0, isReject = false, derivHtml = "";
+
+            if (currentCalcType === 'z-test') {
+                const x1 = parseFloat(document.getElementById('x1').value);
+                const sd1 = parseFloat(document.getElementById('sd1').value);
+                const n1 = parseFloat(document.getElementById('n1').value);
+                const x2 = parseFloat(document.getElementById('x2').value);
+                const sd2 = parseFloat(document.getElementById('sd2').value);
+                const n2 = parseFloat(document.getElementById('n2').value);
+
+                const se = Math.sqrt((sd1 * sd1) / n1 + (sd2 * sd2) / n2);
+                stat = (x1 - x2) / se;
+
+                if (tail === 'two-tailed') {
+                    critVal = normInv(1 - alpha / 2);
+                    pVal = 2 * (1 - normCDF(Math.abs(stat)));
+                    isReject = Math.abs(stat) > critVal;
+                } else if (tail === 'right-tailed') {
+                    critVal = normInv(1 - alpha);
+                    pVal = 1 - normCDF(stat);
+                    isReject = stat > critVal;
+                } else {
+                    critVal = -normInv(1 - alpha);
+                    pVal = normCDF(stat);
+                    isReject = stat < critVal;
+                }
+
+                derivHtml = `
+                    <div class="space-y-2">
+                        <p class="font-semibold text-blue-300">1. Standard Error Calculation:</p>
+                        <p>$$\\sigma_{\\bar{x}_1 - \\bar{x}_2} = \\sqrt{\\frac{\\sigma_1^2}{n_1} + \\frac{\\sigma_2^2}{n_2}} = \\sqrt{\\frac{${sd1}^2}{${n1}} + \\frac{${sd2}^2}{${n2}}} = \\sqrt{${((sd1*sd1)/n1).toFixed(4)} + ${((sd2*sd2)/n2).toFixed(4)}} = ${se.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">2. Test Statistic Calculation ($z_0$):</p>
+                        <p>$$z_0 = \\frac{(\\bar{x}_1 - \\bar{x}_2) - (\\mu_1 - \\mu_2)}{\\sigma_{\\bar{x}_1 - \\bar{x}_2}} = \\frac{(${x1} - ${x2}) - 0}{${se.toFixed(4)}} = \\frac{${(x1-x2).toFixed(2)}}{${se.toFixed(4)}} = ${stat.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">3. Critical Value & Decision Rule:</p>
+                        <p>Significance Level $\\alpha = ${alpha}$, Tail: ${tail}. Critical Value = $${(tail === 'two-tailed' ? '\\pm' : '')}${Math.abs(critVal).toFixed(3)}$, $p$-value = ${pVal < 0.0001 ? '< 0.0001' : pVal.toFixed(4)}.</p>
+                        <p class="${isReject ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'}">Conclusion: ${isReject ? 'Reject $H_0$' : 'Fail to Reject $H_0$'} at $\\alpha = ${alpha}$ level of significance.</p>
+                    </div>
+                `;
+            } else if (currentCalcType === 'pooled-t') {
+                const x1 = parseFloat(document.getElementById('x1').value);
+                const s1 = parseFloat(document.getElementById('sd1').value);
+                const n1 = parseFloat(document.getElementById('n1').value);
+                const x2 = parseFloat(document.getElementById('x2').value);
+                const s2 = parseFloat(document.getElementById('sd2').value);
+                const n2 = parseFloat(document.getElementById('n2').value);
+
+                dfVal = n1 + n2 - 2;
+                const sp2 = ((n1 - 1) * s1 * s1 + (n2 - 1) * s2 * s2) / dfVal;
+                const sp = Math.sqrt(sp2);
+                const se = sp * Math.sqrt(1 / n1 + 1 / n2);
+                stat = (x1 - x2) / se;
+
+                if (tail === 'two-tailed') {
+                    critVal = tInv(1 - alpha / 2, dfVal);
+                    pVal = 2 * (1 - tCDF(Math.abs(stat), dfVal));
+                    isReject = Math.abs(stat) > critVal;
+                } else if (tail === 'right-tailed') {
+                    critVal = tInv(1 - alpha, dfVal);
+                    pVal = 1 - tCDF(stat, dfVal);
+                    isReject = stat > critVal;
+                } else {
+                    critVal = -tInv(1 - alpha, dfVal);
+                    pVal = tCDF(stat, dfVal);
+                    isReject = stat < critVal;
+                }
+
+                derivHtml = `
+                    <div class="space-y-2">
+                        <p class="font-semibold text-blue-300">1. Pooled Standard Deviation ($s_p$):</p>
+                        <p>$$s_p = \\sqrt{\\frac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1 + n_2 - 2}} = \\sqrt{\\frac{(${n1}-1)(${s1})^2 + (${n2}-1)(${s2})^2}{${n1} + ${n2} - 2}} = \\sqrt{${sp2.toFixed(4)}} = ${sp.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">2. Standard Error of Difference:</p>
+                        <p>$$s_{\\bar{x}_1 - \\bar{x}_2} = s_p \\sqrt{\\frac{1}{n_1} + \\frac{1}{n_2}} = ${sp.toFixed(4)} \\cdot \\sqrt{\\frac{1}{${n1}} + \\frac{1}{${n2}}} = ${se.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">3. Test Statistic ($t_0$) & Degrees of Freedom ($\\text{df}$):</p>
+                        <p>$$\\text{df} = n_1 + n_2 - 2 = ${n1} + ${n2} - 2 = ${dfVal}$$</p>
+                        <p>$$t_0 = \\frac{\\bar{x}_1 - \\bar{x}_2}{s_{\\bar{x}_1 - \\bar{x}_2}} = \\frac{${x1} - ${x2}}{${se.toFixed(4)}} = \\frac{${(x1-x2).toFixed(2)}}{${se.toFixed(4)}} = ${stat.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">4. Critical Value & Decision Rule:</p>
+                        <p>Critical Value $t_{\\text{crit}} = ${(tail === 'two-tailed' ? '\\pm' : '')}${Math.abs(critVal).toFixed(3)}$, $p$-value = ${pVal < 0.0001 ? '< 0.0001' : pVal.toFixed(4)}.</p>
+                        <p class="${isReject ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'}">Conclusion: ${isReject ? 'Reject $H_0$' : 'Fail to Reject $H_0$'} at $\\alpha = ${alpha}$ level of significance.</p>
+                    </div>
+                `;
+            } else if (currentCalcType === 'satterthwaite-t') {
+                const x1 = parseFloat(document.getElementById('x1').value);
+                const s1 = parseFloat(document.getElementById('sd1').value);
+                const n1 = parseFloat(document.getElementById('n1').value);
+                const x2 = parseFloat(document.getElementById('x2').value);
+                const s2 = parseFloat(document.getElementById('sd2').value);
+                const n2 = parseFloat(document.getElementById('n2').value);
+
+                const v1 = (s1 * s1) / n1;
+                const v2 = (s2 * s2) / n2;
+                const se = Math.sqrt(v1 + v2);
+                stat = (x1 - x2) / se;
+
+                const dfUnrounded = Math.pow(v1 + v2, 2) / ((v1 * v1) / (n1 - 1) + (v2 * v2) / (n2 - 1));
+                dfVal = Math.floor(dfUnrounded);
+
+                if (tail === 'two-tailed') {
+                    critVal = tInv(1 - alpha / 2, dfVal);
+                    pVal = 2 * (1 - tCDF(Math.abs(stat), dfVal));
+                    isReject = Math.abs(stat) > critVal;
+                } else if (tail === 'right-tailed') {
+                    critVal = tInv(1 - alpha, dfVal);
+                    pVal = 1 - tCDF(stat, dfVal);
+                    isReject = stat > critVal;
+                } else {
+                    critVal = -tInv(1 - alpha, dfVal);
+                    pVal = tCDF(stat, dfVal);
+                    isReject = stat < critVal;
+                }
+
+                derivHtml = `
+                    <div class="space-y-2">
+                        <p class="font-semibold text-blue-300">1. Non-Pooled Standard Error ($SE$):</p>
+                        <p>$$s_{\\bar{x}_1 - \\bar{x}_2} = \\sqrt{\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}} = \\sqrt{\\frac{${s1}^2}{${n1}} + \\frac{${s2}^2}{${n2}}} = \\sqrt{${v1.toFixed(4)} + ${v2.toFixed(4)}} = ${se.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">2. Welch-Satterthwaite Degrees of Freedom ($\\text{df}$):</p>
+                        <p>$$\\text{df} = \\frac{\\left(\\frac{s_1^2}{n_1} + \\frac{s_2^2}{n_2}\\right)^2}{\\frac{(s_1^2/n_1)^2}{n_1-1} + \\frac{(s_2^2/n_2)^2}{n_2-1}} = \\frac{(${v1.toFixed(4)} + ${v2.toFixed(4)})^2}{\\frac{(${v1.toFixed(4)})^2}{${n1-1}} + \\frac{(${v2.toFixed(4)})^2}{${n2-1}}} = ${dfUnrounded.toFixed(3)}$$</p>
+                        <p>$$\\text{df}_{\\text{rounded down}} = \\lfloor ${dfUnrounded.toFixed(3)} \\rfloor = ${dfVal}$$</p>
+                        <p class="font-semibold text-blue-300">3. Test Statistic Calculation ($t_0$):</p>
+                        <p>$$t_0 = \\frac{\\bar{x}_1 - \\bar{x}_2}{s_{\\bar{x}_1 - \\bar{x}_2}} = \\frac{${x1} - ${x2}}{${se.toFixed(4)}} = \\frac{${(x1-x2).toFixed(2)}}{${se.toFixed(4)}} = ${stat.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">4. Critical Value & Decision Rule:</p>
+                        <p>Critical Value $t_{${alpha}, ${dfVal}} = ${(tail === 'two-tailed' ? '\\pm' : '')}${Math.abs(critVal).toFixed(3)}$, $p$-value = ${pVal < 0.0001 ? '< 0.0001' : pVal.toFixed(4)}.</p>
+                        <p class="${isReject ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'}">Conclusion: ${isReject ? 'Reject $H_0$' : 'Fail to Reject $H_0$'} at $\\alpha = ${alpha}$ level of significance.</p>
+                    </div>
+                `;
+            } else if (currentCalcType === 'paired-t') {
+                const dMean = parseFloat(document.getElementById('d_mean').value);
+                const sdD = parseFloat(document.getElementById('sd_d').value);
+                const nPairs = parseFloat(document.getElementById('n_pairs').value);
+
+                dfVal = nPairs - 1;
+                const se = sdD / Math.sqrt(nPairs);
+                stat = dMean / se;
+
+                if (tail === 'two-tailed') {
+                    critVal = tInv(1 - alpha / 2, dfVal);
+                    pVal = 2 * (1 - tCDF(Math.abs(stat), dfVal));
+                    isReject = Math.abs(stat) > critVal;
+                } else if (tail === 'right-tailed') {
+                    critVal = tInv(1 - alpha, dfVal);
+                    pVal = 1 - tCDF(stat, dfVal);
+                    isReject = stat > critVal;
+                } else {
+                    critVal = -tInv(1 - alpha, dfVal);
+                    pVal = tCDF(stat, dfVal);
+                    isReject = stat < critVal;
+                }
+
+                derivHtml = `
+                    <div class="space-y-2">
+                        <p class="font-semibold text-blue-300">1. Standard Error of Differences ($s_{\\bar{d}}$):</p>
+                        <p>$$s_{\\bar{d}} = \\frac{s_d}{\\sqrt{n}} = \\frac{${sdD}}{\\sqrt{${nPairs}}} = ${se.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">2. Degrees of Freedom ($\\text{df}$):</p>
+                        <p>$$\\text{df} = n - 1 = ${nPairs} - 1 = ${dfVal}$$</p>
+                        <p class="font-semibold text-blue-300">3. Test Statistic Calculation ($t_0$):</p>
+                        <p>$$t_0 = \\frac{\\bar{d} - \\mu_d}{s_{\\bar{d}}} = \\frac{${dMean} - 0}{${se.toFixed(4)}} = ${stat.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">4. Critical Value & Decision Rule:</p>
+                        <p>Critical Value $t_{${alpha}, ${dfVal}} = ${(tail === 'two-tailed' ? '\\pm' : '')}${Math.abs(critVal).toFixed(3)}$, $p$-value = ${pVal < 0.0001 ? '< 0.0001' : pVal.toFixed(4)}.</p>
+                        <p class="${isReject ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'}">Conclusion: ${isReject ? 'Reject $H_0$' : 'Fail to Reject $H_0$'} at $\\alpha = ${alpha}$ level of significance.</p>
+                    </div>
+                `;
+            } else if (currentCalcType === 'two-prop') {
+                const x1 = parseFloat(document.getElementById('x1').value);
+                const n1 = parseFloat(document.getElementById('n1').value);
+                const x2 = parseFloat(document.getElementById('x2').value);
+                const n2 = parseFloat(document.getElementById('n2').value);
+
+                const p1 = x1 / n1;
+                const p2 = x2 / n2;
+                const pBar = (x1 + x2) / (n1 + n2);
+                const qBar = 1 - pBar;
+
+                const se = Math.sqrt(pBar * qBar * (1 / n1 + 1 / n2));
+                stat = (p1 - p2) / se;
+
+                if (tail === 'two-tailed') {
+                    critVal = normInv(1 - alpha / 2);
+                    pVal = 2 * (1 - normCDF(Math.abs(stat)));
+                    isReject = Math.abs(stat) > critVal;
+                } else if (tail === 'right-tailed') {
+                    critVal = normInv(1 - alpha);
+                    pVal = 1 - normCDF(stat);
+                    isReject = stat > critVal;
+                } else {
+                    critVal = -normInv(1 - alpha);
+                    pVal = normCDF(stat);
+                    isReject = stat < critVal;
+                }
+
+                derivHtml = `
+                    <div class="space-y-2">
+                        <p class="font-semibold text-blue-300">1. Sample Proportions & Pooled Proportion ($\\bar{p}$):</p>
+                        <p>$$\\hat{p}_1 = \\frac{${x1}}{${n1}} = ${p1.toFixed(4)}, \\quad \\hat{p}_2 = \\frac{${x2}}{${n2}} = ${p2.toFixed(4)}$$</p>
+                        <p>$$\\bar{p} = \\frac{x_1 + x_2}{n_1 + n_2} = \\frac{${x1} + ${x2}}{${n1} + ${n2}} = \\frac{${x1+x2}}{${n1+n2}} = ${pBar.toFixed(4)}, \\quad \\bar{q} = 1 - \\bar{p} = ${qBar.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">2. Standard Error Calculation ($SE$):</p>
+                        <p>$$SE = \\sqrt{\\bar{p}\\bar{q}\\left(\\frac{1}{n_1} + \\frac{1}{n_2}\\right)} = \\sqrt{(${pBar.toFixed(4)})(${qBar.toFixed(4)})\\left(\\frac{1}{${n1}} + \\frac{1}{${n2}}\\right)} = ${se.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">3. Test Statistic Calculation ($z_0$):</p>
+                        <p>$$z_0 = \\frac{\\hat{p}_1 - \\hat{p}_2}{SE} = \\frac{${p1.toFixed(4)} - ${p2.toFixed(4)}}{${se.toFixed(4)}} = \\frac{${(p1-p2).toFixed(4)}}{${se.toFixed(4)}} = ${stat.toFixed(4)}$$</p>
+                        <p class="font-semibold text-blue-300">4. Critical Value & Decision Rule:</p>
+                        <p>Critical Value $z_{\\text{crit}} = ${(tail === 'two-tailed' ? '\\pm' : '')}${Math.abs(critVal).toFixed(3)}$, $p$-value = ${pVal < 0.0001 ? '< 0.0001' : pVal.toFixed(4)}.</p>
+                        <p class="${isReject ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'}">Conclusion: ${isReject ? 'Reject $H_0$' : 'Fail to Reject $H_0$'} at $\\alpha = ${alpha}$ level of significance.</p>
+                    </div>
+                `;
+            }
+
+            // Update Summary UI Cards
+            document.getElementById('out-stat').innerText = stat.toFixed(3);
+            document.getElementById('out-crit').innerText = (tail === 'two-tailed' ? '±' : '') + Math.abs(critVal).toFixed(3);
+
+            const decBox = document.getElementById('out-decision');
+            decBox.innerHTML = `
+                <div class="${isReject ? 'text-rose-700 font-bold' : 'text-emerald-700 font-bold'}">${isReject ? 'REJECT H₀' : 'FAIL TO REJECT H₀'}</div>
+                <div class="text-[11px] font-mono text-slate-500">p = ${pVal < 0.0001 ? '< 0.0001' : pVal.toFixed(4)}</div>
+            `;
+
+            const derivContainer = document.getElementById('out-derivation');
+            derivContainer.innerHTML = derivHtml;
+            triggerKaTeX(derivContainer);
+            renderDistributionChart(stat, critVal, tail);
+        }
+
+        function renderDistributionChart(statVal, critVal, tailVal) {
+            const ctx = document.getElementById('distributionChart');
+            if (!ctx) return;
+
+            // Generate normal curve data points (-4 to +4)
+            const labels = [];
+            const dataPoints = [];
+            const bgColors = [];
+
+            const isTwoTailed = tailVal === 'two-tailed';
+            const isRightTailed = tailVal === 'right-tailed';
+            const isLeftTailed = tailVal === 'left-tailed';
+            const absCrit = Math.abs(critVal);
+
+            for (let x = -4; x <= 4; x += 0.08) {
+                labels.push(x.toFixed(2));
+                const y = Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+                dataPoints.push(y);
+
+                // Determine if x falls in rejection region
+                let inRejection = false;
+                if (isTwoTailed) {
+                    if (x <= -absCrit || x >= absCrit) inRejection = true;
+                } else if (isRightTailed) {
+                    if (x >= critVal) inRejection = true;
+                } else if (isLeftTailed) {
+                    if (x <= critVal) inRejection = true;
+                }
+
+                bgColors.push(inRejection ? 'rgba(244, 63, 94, 0.4)' : 'rgba(59, 130, 246, 0.2)');
+            }
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sampling Distribution',
+                        data: dataPoints,
+                        borderColor: '#3b82f6',
+                        borderWidth: 2,
+                        fill: true,
+                        backgroundColor: bgColors,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: (items) => `Z / t = ${items[0].label}`,
+                                label: (item) => `Density: ${item.raw.toFixed(4)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: { display: true, text: `Test Statistic (Observed = ${statVal.toFixed(3)})`, font: { size: 10 } },
+                            ticks: { maxTicksLimit: 9, font: { size: 9 } }
+                        },
+                        y: { display: false }
+                    }
+                }
+            });
+        }
+
+        function copyCode(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            const text = el.innerText || el.textContent;
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+            } catch(err) {}
+            document.body.removeChild(textarea);
+        }
+
+        // ==========================================
+        // BLOOM'S TAXONOMY QUIZ BANK
+        // ==========================================
+        const bloomQuizData = [
+            {
+                id: "bq1",
+                level: "remember",
+                levelLabel: "Remembering (Bloom L1)",
+                badgeColor: "bg-blue-100 text-blue-800",
+                question: "In a pooled $t$-test with sample sizes $n_1 = 35$ and $n_2 = 30$, what are the degrees of freedom ($\\text{df}$)?",
+                options: [
+                    "A) $\\text{df} = 65$",
+                    "B) $\\text{df} = 64$",
+                    "C) $\\text{df} = 63$",
+                    "D) $\\text{df} = 34$"
+                ],
+                correct: 2,
+                explanation: "For a pooled $t$-test, $\\text{df} = n_1 + n_2 - 2 = 35 + 30 - 2 = 63$."
+            },
+            {
+                id: "bq2",
+                level: "understand",
+                levelLabel: "Understanding (Bloom L2)",
+                badgeColor: "bg-emerald-100 text-emerald-800",
+                question: "Why does the paired $t$-test typically offer higher statistical power than an independent two-sample $t$-test when data comes in natural pairs?",
+                options: [
+                    "A) It increases the total degrees of freedom.",
+                    "B) It eliminates between-subject variability by focusing solely on within-pair differences $d_i$.",
+                    "C) It assumes equal population standard deviations.",
+                    "D) It allows testing when samples are non-normal."
+                ],
+                correct: 1,
+                explanation: "By computing pair differences $d_i = x_{1i} - x_{2i}$ first, the paired $t$-test removes subject-to-subject baseline variation, reducing standard error."
+            },
+            {
+                id: "bq3",
+                level: "apply",
+                levelLabel: "Applying (Bloom L3)",
+                badgeColor: "bg-amber-100 text-amber-800",
+                question: "You run SAS `PROC TTEST` for male vs female SAT scores. The Folded $F$-test outputs $F = 1.45, p\\text{-value} = 0.2545$. Which row of the SAS output should you interpret?",
+                options: [
+                    "A) Satterthwaite row, because $p > 0.05$",
+                    "B) Pooled row, because we fail to reject $H_0: \\sigma_1^2 = \\sigma_2^2$ ($p = 0.2545 > 0.05$)",
+                    "C) Satterthwaite row, because standard deviations are unknown",
+                    "D) Neither; run a paired $t$-test instead"
+                ],
+                correct: 1,
+                explanation: "Since the Folded $F$-test $p\\text{-value} = 0.2545 > 0.05$, we fail to reject variance equality. Thus, we select the Pooled $t$-test result."
+            },
+            {
+                id: "bq4",
+                level: "analyze",
+                levelLabel: "Analyzing (Bloom L4)",
+                badgeColor: "bg-purple-100 text-purple-800",
+                question: "A researcher tests $H_0: \\mu_1 = \\mu_2$ vs $H_A: \\mu_1 > \\mu_2$ at $\\alpha = 0.05$. The two-sided 95% CI for $\\mu_1 - \\mu_2$ is $(-2.5, 14.8)$. What can you conclude about the right-tailed hypothesis test at $\\alpha = 0.05$?",
+                options: [
+                    "A) The corresponding 90% CI for a one-sided 5% test must be calculated to confirm, but 0 in 95% CI suggests $p > 0.025$.",
+                    "B) We can immediately reject $H_0$ because 14.8 is positive.",
+                    "C) We reject $H_0$ because the interval is centered above zero.",
+                    "D) The test is invalid because sample sizes were unequal."
+                ],
+                correct: 0,
+                explanation: "For a one-tailed test at $\\alpha = 0.05$, the matching confidence interval duality is $(1 - 2\\alpha)\\times 100\\% = 90\\%$ CI. Since 0 is in the 95% CI, further calculation of the 90% CI is needed."
+            },
+            {
+                id: "bq5",
+                level: "remember",
+                levelLabel: "Remembering (Bloom L1)",
+                badgeColor: "bg-blue-100 text-blue-800",
+                question: "What does the Folded $F$-test specifically evaluate in the context of two-sample $t$-tests?",
+                options: [
+                    "A) Whether the two sample means are equal ($H_0: \\mu_1 = \\mu_2$)",
+                    "B) Whether the two population variances are equal ($H_0: \\sigma_1^2 = \\sigma_2^2$)",
+                    "C) Whether the data in each group are normally distributed",
+                    "D) Whether both sample sizes are large enough for the CLT to apply"
+                ],
+                correct: 1,
+                explanation: "The Folded $F$-test is a pre-test for variance equality. If $p > \\alpha$, fail to reject $H_0: \\sigma_1^2 = \\sigma_2^2$ and use the Pooled $t$-test. If $p \\leq \\alpha$, reject variance equality and use the Satterthwaite $t$-test."
+            },
+            {
+                id: "bq6",
+                level: "remember",
+                levelLabel: "Remembering (Bloom L1)",
+                badgeColor: "bg-blue-100 text-blue-800",
+                question: "A paired study measures 12 participants once before and once after an intervention. What are the correct degrees of freedom for the paired $t$-test?",
+                options: [
+                    "A) $\\text{df} = 23 \\;(n_1 + n_2 - 2)$",
+                    "B) $\\text{df} = 22 \\;(\\text{total observations} - 2)$",
+                    "C) $\\text{df} = 11 \\;(n_{\\text{pairs}} - 1 = 12 - 1)$",
+                    "D) $\\text{df} = 24 \\;(\\text{total observations} - 1)$"
+                ],
+                correct: 2,
+                explanation: "In a paired $t$-test, $\\text{df} = n_{\\text{pairs}} - 1 = 12 - 1 = 11$. The 24 total measurements collapse into 12 differences $d_i$, and we lose 1 df estimating $\\bar{d}$."
+            },
+            {
+                id: "bq7",
+                level: "understand",
+                levelLabel: "Understanding (Bloom L2)",
+                badgeColor: "bg-emerald-100 text-emerald-800",
+                question: "Why does the Satterthwaite (Welch) $\\text{df}$ always come out $\\leq$ the pooled $\\text{df}$ of $n_1 + n_2 - 2$?",
+                options: [
+                    "A) Because the Welch formula penalises for unequal sample sizes",
+                    "B) Because unequal variances reduce effective information; the Welch formula conservatively lowers $\\text{df}$ to widen critical values",
+                    "C) Because the numerator of the Welch formula only uses one of the two sample variances",
+                    "D) Because SAS always rounds the Satterthwaite $\\text{df}$ up to the next integer"
+                ],
+                correct: 1,
+                explanation: "The Welch $\\text{df}$ formula is mathematically bounded above by $n_1 + n_2 - 2$. When variances are unequal, information from each sample is weighted differently, reducing the effective combined degrees of freedom and making the test more conservative."
+            },
+            {
+                id: "bq8",
+                level: "understand",
+                levelLabel: "Understanding (Bloom L2)",
+                badgeColor: "bg-emerald-100 text-emerald-800",
+                question: "In the two-proportion $Z$-test, why must we use the pooled proportion $\\bar{p} = \\frac{x_1 + x_2}{n_1 + n_2}$ in the standard error formula rather than the individual $\\hat{p}_1$ and $\\hat{p}_2$?",
+                options: [
+                    "A) Because under $H_0: p_1 = p_2$, the best estimate of the common proportion uses all data combined via $\\bar{p}$",
+                    "B) Because individual proportions have different variances that cannot be compared directly",
+                    "C) Because pooling always reduces the standard error, making the test more sensitive",
+                    "D) Because the two-proportion $Z$-test requires a single population parameter by mathematical construction"
+                ],
+                correct: 0,
+                explanation: "We pool because $H_0$ assumes $p_1 = p_2$. Under this null, there is a single common proportion $p$, and $\\bar{p}$ is the best combined estimate of it. Using separate $\\hat{p}_1$ and $\\hat{p}_2$ would contradict the null assumption."
+            },
+            {
+                id: "bq9",
+                level: "apply",
+                levelLabel: "Applying (Bloom L3)",
+                badgeColor: "bg-amber-100 text-amber-800",
+                question: "A researcher records resting heart rate for 25 runners: once in Week 1 (before training) and again in Week 12 (after training). The same 25 runners are measured both times. Which test is most appropriate?",
+                options: [
+                    "A) Pooled $t$-test: $\\sigma$ unknown, equal variances assumed",
+                    "B) Two-Means $Z$-test: large $n$ justifies normal approximation",
+                    "C) Paired $t$-test: same 25 runners measured twice → dependent samples",
+                    "D) Satterthwaite $t$-test: $\\sigma$ unknown, unequal variances assumed"
+                ],
+                correct: 2,
+                explanation: "Repeated measures on the same subjects create natural pairs $(\\text{Week 1}_i, \\text{Week 12}_i)$. Applying an independent-samples test here would inflate variability by ignoring within-subject correlation and lose statistical power."
+            },
+            {
+                id: "bq10",
+                level: "analyze",
+                levelLabel: "Analyzing (Bloom L4)",
+                badgeColor: "bg-purple-100 text-purple-800",
+                question: "Group 1: $s_1 = 15,\\; n_1 = 25$. Group 2: $s_2 = 28,\\; n_2 = 20$. PROC TTEST shows Folded $F = 3.484,\\; p = 0.012$. At $\\alpha = 0.05$, which test and $\\text{df}$ rule apply?",
+                options: [
+                    "A) Satterthwaite $t$-test; apply the Welch $\\text{df}$ formula and round DOWN — $p = 0.012 \\leq 0.05$ rejects $\\sigma_1^2 = \\sigma_2^2$",
+                    "B) Pooled $t$-test; $\\text{df} = n_1 + n_2 - 2 = 43$ — Folded $F$ result suggests equal variances",
+                    "C) Pooled $t$-test; large sample sizes justify equal-variance assumption regardless of Folded $F$",
+                    "D) Satterthwaite $t$-test; use $\\text{df} = n_1 + n_2 - 2 = 43$ for simplicity"
+                ],
+                correct: 0,
+                explanation: "Since $p = 0.012 < \\alpha = 0.05$, we reject $H_0: \\sigma_1^2 = \\sigma_2^2$ and must read the Satterthwaite row. Option D is wrong because the Satterthwaite test always uses the Welch $\\text{df}$ formula (rounded DOWN), never $n_1 + n_2 - 2$."
+            }
+        ];
+
+        function renderBloomQuizBank(filter = 'all') {
+            const container = document.getElementById('bloom-quiz-container');
+            if (!container) return;
+
+            const filtered = filter === 'all' ? bloomQuizData : bloomQuizData.filter(q => q.level === filter);
+
+            container.innerHTML = filtered.map((q, idx) => `
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold ${q.badgeColor} px-2.5 py-1 rounded">${q.levelLabel}</span>
+                        <span class="text-xs text-slate-400 font-mono">Question ${idx + 1}</span>
+                    </div>
+                    <p class="text-sm text-slate-800 font-medium leading-relaxed">${q.question}</p>
+                    <div class="space-y-2 text-xs pt-1">
+                        ${q.options.map((opt, oIdx) => `
+                            <button onclick="checkBloomAnswer('${q.id}', ${oIdx})" id="opt-${q.id}-${oIdx}" class="w-full text-left p-3 bg-white hover:bg-blue-50 border border-slate-200 rounded-lg transition font-normal text-slate-700 flex justify-between items-center">
+                                <span>${opt}</span>
+                                <i id="icon-${q.id}-${oIdx}" class="fa-regular fa-circle text-slate-300"></i>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div id="exp-${q.id}" class="hidden p-3 bg-slate-900 text-slate-100 rounded-lg text-xs space-y-1 mt-2">
+                        <div class="font-bold text-amber-400">Explanation:</div>
+                        <div id="exp-text-${q.id}">${q.explanation}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            triggerKaTeX(container);
+        }
+
+        function filterBloomQuiz(level) {
+            document.querySelectorAll('.bloom-filter-btn').forEach(btn => {
+                btn.className = "bloom-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-medium transition";
+            });
+            if (event && event.target) {
+                event.target.className = "bloom-filter-btn active px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold text-xs transition";
+            }
+            renderBloomQuizBank(level);
+        }
+
+        function checkBloomAnswer(qId, selectedIdx) {
+            const item = bloomQuizData.find(q => q.id === qId);
+            if (!item) return;
+
+            item.options.forEach((_, oIdx) => {
+                const btn = document.getElementById(`opt-${qId}-${oIdx}`);
+                const icon = document.getElementById(`icon-${qId}-${oIdx}`);
+                if (!btn || !icon) return;
+
+                btn.disabled = true;
+                if (oIdx === item.correct) {
+                    btn.className = "w-full text-left p-3 bg-emerald-50 border-2 border-emerald-500 rounded-lg font-medium text-emerald-900 flex justify-between items-center";
+                    icon.className = "fa-solid fa-circle-check text-emerald-600";
+                } else if (oIdx === selectedIdx) {
+                    btn.className = "w-full text-left p-3 bg-rose-50 border-2 border-rose-500 rounded-lg text-rose-900 flex justify-between items-center";
+                    icon.className = "fa-solid fa-circle-xmark text-rose-600";
+                }
+            });
+
+            const exp = document.getElementById(`exp-${qId}`);
+            if (exp) {
+                exp.classList.remove('hidden');
+                triggerKaTeX(exp);
+            }
+
+            if (selectedIdx === item.correct) {
+                userQuizScore++;
+                const scoreBadge = document.getElementById('global-quiz-score');
+                if (scoreBadge) scoreBadge.innerText = `${userQuizScore}/10`;
+            }
+        }
+
+        // ==========================================
+        // EXAM DRILL LOGIC
+        // ==========================================
+        function toggleDrillTimer() {
+            const btn = document.getElementById('drill-start-btn');
+            const timerDisplay = document.getElementById('drill-timer');
+
+            if (!drillTimerRunning) {
+                drillTimerRunning = true;
+                if (btn) btn.innerText = "Pause Timer";
+
+                drillTimerInterval = setInterval(() => {
+                    if (drillTimeLeft > 0) {
+                        drillTimeLeft--;
+                        const mins = Math.floor(drillTimeLeft / 60);
+                        const secs = drillTimeLeft % 60;
+                        if (timerDisplay) {
+                            timerDisplay.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                        }
+                    } else {
+                        clearInterval(drillTimerInterval);
+                        drillTimerRunning = false;
+                        submitExamDrill();
+                    }
+                }, 1000);
+            } else {
+                clearInterval(drillTimerInterval);
+                drillTimerRunning = false;
+                if (btn) btn.innerText = "Resume Timer";
+            }
+        }
+
+        function submitExamDrill() {
+            if (drillTimerInterval) clearInterval(drillTimerInterval);
+            drillTimerRunning = false;
+
+            let score = 0;
+            const answers = {
+                drill_q1: { correct: 'B', marks: 3, sol: 'Q1: σ₁ and σ₂ are KNOWN → Two-Means Z-Test. z₀ = (28.4 - 25.9)/√(5.8²/40 + 6.4²/36) = 1.777. Critical value for two-tailed test at α=0.05 is ±1.96. Since |1.777| < 1.96, do NOT reject H₀.' },
+                drill_q2: { correct: 'A', marks: 4, sol: 'Q2: σ unknown, equal → Pooled t-Test. s_p = 0.3981, SE = 0.1542, t₀ = (3.41 - 3.18)/0.1542 = 1.492. df = 15 + 12 - 2 = 25. Critical value t(0.05, 25) = 1.708. Since 1.492 < 1.708, do NOT reject H₀.' },
+                drill_q3: { correct: 'A', marks: 4, sol: 'Q3: σ unknown, unequal → Satterthwaite t-Test. SE = 133.87, t₀ = 210/133.87 = 1.569. Welch df = 29.15 → round DOWN to 29. Critical value t(0.05, 29) = 1.699. Since 1.569 < 1.699, do NOT reject H₀.' },
+                drill_q4: { correct: 'A', marks: 3, sol: 'Q4: Paired observations → Paired t-Test. d̄ = -208.75, s_d = 49.77, SE = 17.60, t₀ = -208.75/17.60 = -11.86. df = 7. Critical value t(0.05, 7) = -1.895. Since -11.86 < -1.895, REJECT H₀.' },
+                drill_q5: { correct: 'A', marks: 3, sol: 'Q5: Two Proportions → Two-Proportion Z-Test. p̄ = (310+72)/(380+120) = 0.764. SE = 0.04447, z₀ = (0.8158 - 0.6000)/0.04447 = 4.854 > 1.96 → REJECT H₀.' },
+                drill_q6: { correct: 'A', marks: 3, sol: 'Q6: Folded F-Test. F₀ = 2.3²/1.1² = 5.29/1.21 = 4.372. p = 0.0082 ≤ 0.05 → REJECT H₀: σ₁²=σ₂² → Variances unequal → Report SATTERTHWAITE row. Option B is wrong: rejecting variance equality means we do NOT use Pooled.' },
+                drill_q7: { correct: 'A', marks: 4, sol: 'Q7: Folded F p=0.68 > 0.05 → POOLED t-Test. sp² = (17×0.7225 + 15×0.6084)/32 = 21.4085/32 = 0.6690, sp = 0.8179, SE = 0.8179×√(1/18+1/16) = 0.2811. t₀ = (4.2-4.9)/0.2811 = -2.490. df = 32. Two-tailed α=0.01: t(0.005,32) ≈ 2.738. |t₀| = 2.490 < 2.738 → Do NOT reject H₀. Option B uses α=0.05 CV (2.042) for an α=0.01 test.' },
+                drill_q8: { correct: 'A', marks: 4, sol: 'Q8: Folded F p=0.015 ≤ 0.05 → SATTERTHWAITE t-Test. v₁ = 1.2²/10 = 0.144, v₂ = 2.4²/8 = 0.72, SE = √(0.144+0.72) = 0.9295. t₀ = (5.8-6.5)/0.9295 = -0.753. Welch df = (0.864)²/[(0.144²/9)+(0.72²/7)] = 0.7465/0.07636 = 9.775 → round DOWN to 9. Left-tailed CV = -t(0.05,9) = -1.833. t₀ = -0.753 > -1.833 → Do NOT reject H₀.' },
+                drill_q9: { correct: 'A', marks: 4, sol: 'Q9: Same 25 testers measured twice → PAIRED t-Test. d values: 12,8,15,-3,10,6,9,14,2,7. Σdᵢ=80, d̄=8.0. Σdᵢ²=908, s_d²=(908-640)/9=29.78, s_d=5.457, SE=5.457/√10=1.725. t₀=8.0/1.725=4.638. df=n-1=9. Two-tailed t(0.025,9)=2.262. 4.638 > 2.262 → REJECT H₀. Option B uses wrong df=10 and its CV 2.228.' },
+                drill_q10: { correct: 'A', marks: 3, sol: 'Q10: Two Proportions, left-tailed. p̄=(142+168)/400=0.775, q̄=0.225. SE=√(0.775×0.225×(1/200+1/200))=√0.001744=0.04176. z₀=(0.710-0.840)/0.04176=-3.113. Left-tailed CV=-1.645. z₀=-3.113 < -1.645 → REJECT H₀. Option B uses -1.96 (two-tailed CV) for a one-tailed test — incorrect.' }
+            };
+
+            for (let qKey in answers) {
+                const selected = document.querySelector(`input[name="${qKey}"]:checked`);
+                const solDiv = document.getElementById(`drill-sol-${qKey.replace('drill_', '')}`);
+                
+                if (solDiv) {
+                    solDiv.classList.remove('hidden');
+                    solDiv.innerText = answers[qKey].sol;
+                }
+
+                if (selected && selected.value === answers[qKey].correct) {
+                    score += answers[qKey].marks;
+                }
+            }
+
+            const summary = document.getElementById('drill-results-summary');
+            const scoreDisplay = document.getElementById('drill-score-display');
+            const feedbackText = document.getElementById('drill-feedback-text');
+
+            if (summary && scoreDisplay) {
+                summary.classList.remove('hidden');
+                scoreDisplay.innerText = `${score} / 35 Marks`;
+                if (score >= 28) {
+                    feedbackText.innerText = "Excellent performance! You have mastered Two-Sample Hypothesis Testing concepts, formulas, and decisions.";
+                } else if (score >= 20) {
+                    feedbackText.innerText = "Good effort! Review the degrees of freedom calculations and decision rules for Pooled vs. Satterthwaite tests.";
+                } else {
+                    feedbackText.innerText = "Keep practicing! Use the Concept Matrix and Decision Tree Wizard to reinforce test selection criteria.";
+                }
+            }
+
+            triggerKaTeX();
+        }
+    </script>
+</body>
+</html>
